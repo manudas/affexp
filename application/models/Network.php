@@ -1,6 +1,6 @@
 <?php
 
-class Network extends CI_Model {
+class Network extends ExtendedModel {
 
     public static $definition = array(
         'id' => array (
@@ -13,5 +13,10 @@ class Network extends CI_Model {
             'defaultValue' => false
         )
     );
-
+    public static $joinable = array(
+        array('join_with' => 'Program', 
+               'own_join_attribute' => 'id',
+               'foreign_join_attribute' => 'id_network',
+               'join_operation' => '=')
+    );
 }

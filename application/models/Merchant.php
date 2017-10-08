@@ -17,5 +17,14 @@ class Merchant extends ExtendedModel {
             'defaultValue' => false
         )
     );
-    
+    public static $joinable = array(
+        array('join_with' => 'Product', 
+               'own_join_attribute' => 'id',
+               'foreign_join_attribute' => 'id_merchant',
+               'join_operation' => '='),
+        array('join_with' => 'Program', 
+               'own_join_attribute' => 'id',
+               'foreign_join_attribute' => 'id_merchant',
+               'join_operation' => '=')
+    );
 }
