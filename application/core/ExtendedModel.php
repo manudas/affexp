@@ -117,23 +117,7 @@ class ExtendedModel extends CI_Model {
         return $object_list;
     }
 
-    /**
-    * @param $list_of_joined_classes multidimensional array in the following format:
-    *                                      - key: next class to be joined with the
-    *                                               current class
-    *                                      - value: array of sub list of joined 
-    *                                               classes in the same format.
-    *                                               Empty or null if no sub list
-    */
-    public function getAllJoinedData($list_of_joined_classes, $limit = null, $offset = 0, $order_by = null, $ordenation = 'ASC', $join_type = null){
-        $join_clausules = static::getJoinClausules($list_of_joined_classes);
-        
-        $this -> db -> select ( '*' );
-        $this -> db -> where ( 'a0.id = ' . $this -> id );
-		$this -> db -> limit ( $limit, $offset );
-        $this -> db -> from ( strtolower(static::$model_table) . ' as a0');
-        $this -> db -> order_by ( $order_by, $ordenation );
-
+    private function makeJoins($join_clausules, $join_type) {
         if (!empty($join_clausules)) {
             for ($i = 0; $i < count($join_clausules); $i++){
 /*
@@ -151,7 +135,7 @@ class ExtendedModel extends CI_Model {
                                          $join_clausule['join_operation'] .
                                          ' ' .
                                          $join_clausule['aliased_foreign_join_attribute'],
-                                         $join_type
+                                         $join_clausule['join_type']
                                     );
                 }
                 else {
@@ -165,9 +149,45 @@ class ExtendedModel extends CI_Model {
                 }
             }
         }
+    }
+
+    /**
+    * @param $list_of_joined_classes multidimensional array in the following format:
+    *                                      - key: next class to be joined with the
+    *                                               current class
+    *                                      - value: array of:
+    *                                                - 'join_type': type of join
+    *                                                - 'sub_list': array of sub list of joined 
+    *                                               classes in the same format.
+    *                                               Empty or null if no sub list
+    */
+    public function getAllJoinedData($list_of_joined_classes, $limit = null, $offset = 0, $order_by = null, $ordenation = 'ASC'){
+        $join_clausules = static::getJoinClausules($list_of_joined_classes);
+        
+        $this -> db -> select ( '*' );
+        $this -> db -> where ( 'a0.id = ' . $this -> id );
+		$this -> db -> limit ( $limit, $offset );
+        $this -> db -> from ( strtolower(static::$model_table) . ' as a0');
+        $this -> db -> order_by ( $order_by, $ordenation );
+
+
+        $this -> makeJoins($join_clausules);
+        
         return $this -> db -> get() -> result_array();
     }
 
+
+
+    /**
+    * @param $list_of_joined_classes multidimensional array in the following format:
+    *                                      - key: next class to be joined with the
+    *                                               current class
+    *                                      - value: array of:
+    *                                                - 'join_type': type of join
+    *                                                - 'sub_list': array of sub list of joined 
+    *                                               classes in the same format.
+    *                                               Empty or null if no sub list
+    */
     private static function getJoinClausules($list_of_joined_classes, $current_alias = 0, $table = __CLASS__){
 
         if (!empty($table)) {
@@ -179,9 +199,9 @@ class ExtendedModel extends CI_Model {
         $current_joinable_set = self::$joinable;
         
         $array_iterator = new RecursiveArrayIterator($list_of_joined_classes);
-        $tree_iterator = new RecursiveTreeIterator($array_iterator);
+        //$tree_iterator = new RecursiveTreeIterator($array_iterator);
         
-        foreach( $tree_iterator as $class_to_join => $sub_joined_array ){
+        foreach( $array_iterator as $class_to_join => $joined_attributes ){
             $is_joinable = false;
             foreach ( $current_joinable_set as $current_joinable ) {
                 if ( strtolower($current_joinable['join_with']) == strtolower($class_to_join) ){
@@ -191,7 +211,10 @@ class ExtendedModel extends CI_Model {
             }
 
             if (!$is_joinable) {
-                throw RuntimeException('The class '.get_class().' is not joinable with '. $class_to_join);
+                $error_string = 'The class '.get_class().' is not joinable with '. $class_to_join;
+                log_message('error', $error_string);
+                show_error($error_string, 500); // returns error 500
+                throw RuntimeException($error_string);
             }
             else {
                 
@@ -202,25 +225,99 @@ class ExtendedModel extends CI_Model {
                 $own_table = static::$model_table . ' as ' . $own_alias;
                 $foreign_table = $class_to_join::$model_table . ' as ' . $foreign_alias;
 
-                $join_clausule_list[] = array('aliased_own_table' => $own_table,
+                $current_joining_data = array('aliased_own_table' => $own_table,
+                                            'own_alias' => $own_alias,
+                                            'own_table' => static::$model_table,
                                             'aliased_foreign_table' => $foreign_table, 
+                                            'foreign_alias' => $foreign_alias,
+                                            'foreign_table' => $class_to_join::$model_table,
                                             'aliased_own_join_attribute' => $own_alias.'.'.$current_joinable['own_join_attribute'],
                                             'aliased_foreign_join_attribute' => $foreign_alias.'.'.$current_joinable['foreign_join_attribute'],
-                                            'join_operation' => $current_joinable['join_operation']);
+                                            'join_operation' => $current_joinable['join_operation'],
+                                            'join_type' => $class_to_join['join_type']);
                 
-                if (!empty($sub_joined_array)) {
-                    $inner_join_clausules = $class_to_join::getAllJoinedData($list_of_joined_classes, $current_alias +1, strtolower($class_to_join));
+
+
+                if (!empty($joined_attributes)) {
+                    $current_joining_data['join_type'] = $joined_attributes['join_type'];
+                }
+
+                $join_clausule_list[] = $current_joining_data;
+
+
+                if (!empty($joined_attributes)) {
+
+                    $inner_join_clausules = $class_to_join::getAllJoinedData($joined_attributes['sub_list'], $current_alias +1, strtolower($class_to_join));
                     $join_clausule_list = array_merge($join_clausule_list, $inner_join_clausules);
                     $current_alias += count($inner_join_clausules);
-                }
-                
+                } 
+
                 $current_alias++;
             }
         }
+        return $join_clausule_list;
     }
 
-    public function getFinalJoinedData($list_of_joined_classes);
 
-    public function getFinalJoinedObjects($list_of_joined_classes);
+    /**
+    * @param $list_of_joined_classes multidimensional array in the following format:
+    *                                      - key: next class to be joined with the
+    *                                               current class
+    *                                      - value: array of:
+    *                                                - 'join_type': type of join
+    *                                                - 'sub_list': array of sub list of joined 
+    *                                               classes in the same format.
+    *                                               Empty or null if no sub list
+    *
+    * @param $join_with string:     classname of which we are going to retrieve the data
+    * @param $ocurrence integer:    the ocurrence number into the $list_of_joined_classes.
+    *                               to use just in the case we are joining with this class
+    *                               more than onece. Default value: FIRST OCURRENCE, 1
+    */
+    public function getFinalJoinedData($list_of_joined_classes, $join_with, $ocurrence = 1, $limit = null, $offset = 0, $order_by = null, $ordenation = 'ASC') {
+        $join_clausules = self::getJoinClausules($list_of_joined_classes);
+
+        $current_ocurrence = 0;
+
+        if(!empty($join_clausules)) {
+            foreach($join_clausules as $join_clausule) {
+                if (strtolower($join_clausul['foreign_table']) == strtolower($join_with)) {
+                    $current_ocurrence++;
+                    if ($current_ocurrence == $ocurrence) {
+                        $alias = $join_clausul['foreign_alias'];
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!empty($alias)) {
+            $this -> db -> select ( $alias.'.*' );
+            $this -> db -> where ( 'a0.id = ' . $this -> id );
+            $this -> db -> limit ( $limit, $offset );
+            $this -> db -> from ( strtolower(static::$model_table) . ' as a0');
+            $this -> db -> order_by ( $order_by, $ordenation );
+
+
+            $this -> makeJoins($join_clausules);
+            
+            return $this -> db -> get() -> result_array();
+        }
+        else {
+            $error_string = "Can't join data tables/classes: " . static::$model_table . ' with ' . $join_with;
+            log_message('error', $error_string);
+            show_error($error_string, 500); // returns error 500
+            throw RuntimeException($error_string);
+        }
+    }
+
+    public function getFinalJoinedObjects($list_of_joined_classes, $join_with, $ocurrence = 1, $limit = null, $offset = 0, $order_by = null, $ordenation = 'ASC') {
+        $data_list = $this -> getFinalJoinedData($list_of_joined_classes, $join_with, $ocurrence, $limit, $offset, $order_by, $ordenation);
+        $result = array();
+        foreach ($data_list as $object_data) {
+            $result[] = new $join_with($object_data);
+        }
+        return $result;
+    }
 
 }
