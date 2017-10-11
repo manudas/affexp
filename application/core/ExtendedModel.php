@@ -97,13 +97,15 @@ class ExtendedModel extends CI_Model {
         if (!empty($table)) {
             static::$model_table = $table;
         }
-  
-        $this -> db -> select ( '*' );
-        $this -> db -> where ( $filter );
-		$this -> db -> limit ( $limit, $offset );
-        $this -> db -> from ( strtolower(static::$model_table) );
-        $this -> db -> order_by ( $order_by, $ordenation );
-        $query_result = $this -> db -> get() -> result_array();
+
+        $instance = &get_instance();
+
+        $instance -> db -> select ( '*' );
+        $instance -> db -> where ( $filter );
+        $instance -> db -> limit ( $limit, $offset );
+        $instance -> db -> from ( strtolower(static::$model_table) );
+        $instance -> db -> order_by ( $order_by, $ordenation );
+        $query_result = $instance -> db -> get() -> result_array();
         return $query_result;
     }
 
@@ -281,10 +283,10 @@ class ExtendedModel extends CI_Model {
 
         if(!empty($join_clausules)) {
             foreach($join_clausules as $join_clausule) {
-                if (strtolower($join_clausul['foreign_table']) == strtolower($join_with)) {
+                if (strtolower($join_clausule['foreign_table']) == strtolower($join_with)) {
                     $current_ocurrence++;
                     if ($current_ocurrence == $ocurrence) {
-                        $alias = $join_clausul['foreign_alias'];
+                        $alias = $join_clausule['foreign_alias'];
                         break;
                     }
                 }

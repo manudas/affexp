@@ -3,43 +3,55 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class ExtendedController extends CI_Controller {
 
+
+    public function __construct(){
+
+        parent::__construct();
+        $this->load =& load_class('ExtendedLoader', 'core');
+        $this->load->initialize();
+
+    }
+
 	protected function genericViewLoader ($view_list, $data = array(), $add_header = true, $add_footer = true, $return_view = false) {
-		
-		if ($return_view) {
-			$result = "";
-		}
-		$data['view_list'] = $view_list;
+
+		$result = "";
+
+
+        foreach ($view_list as $view) {
+            $result .= $this -> load -> view ( $view , $data, true );
+        }
+
+        if ($add_footer) {
+            $footer = $this -> load -> view ( 'footer' , $data, true );
+        }
+        else {
+            $footer = '';
+        }
+
 
 		if ($add_header) {
-			if ($return_view) {
-				$result .= $this -> load -> view ( 'head' , $data, $return_view );
-			}
-			else {
-				$this -> load -> view ( 'head' , $data );
-			}
+            /* we defer the header to know the views loaded,
+             * so we can look into their respective asset
+             * folder to insert the correspondant css and js
+             */
+            $loaded_view_list = $this -> get_var('loaded_view_list');
+            $data['view_list'] = $loaded_view_list;
+
+            $header = $this -> load -> view ( 'head' , $data, true );
+
 		}
-		
-		foreach ($view_list as $view) {
-			if ($return_view) {
-				$result .= $this -> load -> view ( $view , $data, $return_view );
-			}
-			else {
-				$this -> load -> view ( $view , $data );
-			}
-		}
-		
-		if ($add_footer) {
-			if ($return_view) {
-				$result .= $this -> load -> view ( 'head' , $data, $return_view );
-			}
-			else {
-				$this -> load -> view ( 'head' , $data );
-			}
-		}
+		else {
+            $header = '';
+        }
+
+        $result = $header . $result . $footer;
 
 		if ($return_view == true) {
 			return $result;
 		}
+		else {
+		    echo $result;
+        }
 	}
 
 

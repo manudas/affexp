@@ -10,7 +10,6 @@
 
         <?php
             $style_string = "";
-            $external_css = array();
 
             $css_files = glob(FCPATH.'/assets/css/'.$view.'/*.css');
 
@@ -71,7 +70,6 @@
 
     <?php
         $script_string = "";
-        $external_script = array();
 
         $script_files = glob(FCPATH.'/assets/css/'.$view.'/*.js');
 
@@ -102,6 +100,12 @@
             }
         }
 
-        
+        if ( !empty($other_script) ) {
+            foreach ($other_script as $another_script) {
+                ?>
+                <script src="<?php echo $another_script ?>" defer />
+                <?php
+            }
+        }
     ?>
   
