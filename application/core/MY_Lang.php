@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Language {
+class MY_Lang extends CI_Lang {
     
 
     public $filepath = array();

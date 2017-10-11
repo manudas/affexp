@@ -13,6 +13,12 @@ class Merchant extends ExtendedModel {
         'name' => array (
             'defaultValue' => null
         ),
+        'img' => array (
+            'defaultValue' => null
+        ),
+        'url' => array (
+            'defaultValue' => null
+        )
         'active' => array (
             'defaultValue' => false
         )

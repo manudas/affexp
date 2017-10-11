@@ -1,6 +1,6 @@
 <?php
 
-class ExtendedModel extends CI_Model {
+class MY_Model extends CI_Model {
 
     public static $model_table = __CLASS__;
 

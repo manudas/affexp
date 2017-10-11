@@ -1,9 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class ExtendedController extends CI_Controller {
+class MY_Controller extends CI_Controller {
 
-
+/*
     public function __construct(){
 
         parent::__construct();
@@ -11,7 +11,7 @@ class ExtendedController extends CI_Controller {
         $this->load->initialize();
 
     }
-
+*/
 	protected function genericViewLoader ($view_list, $data = array(), $add_header = true, $add_footer = true, $return_view = false) {
 
 		$result = "";
