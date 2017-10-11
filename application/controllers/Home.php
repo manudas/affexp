@@ -12,6 +12,11 @@ class Home extends MY_Controller {
 
 	private function home() {
 
+	    automatizar de alguna manera los pasos que se dan abajo:
+        1 - required models to load
+        2 - required translations to load
+        tal vez se pueda hacer creando un metodo loadDefaults en MY_Controller
+
 	    /* loading all the needed models */
         $this->load->model('merchant');
 
