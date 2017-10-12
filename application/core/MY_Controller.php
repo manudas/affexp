@@ -16,13 +16,27 @@ class MY_Controller extends CI_Controller {
 
 		$result = "";
 
-
+        // we only need to pass it once: it becomes a "global" var
+        // doing it twice or more overwrites the original var,
+        // having the exact same value that the original one
+        $already_passed_data = false;
         foreach ($view_list as $view) {
-            $result .= $this -> load -> view ( $view , $data, true );
+            if ($already_passed_data == false) {
+                $already_passed_data = true;
+                $result .= $this -> load -> view ( $view , $data, true );
+            }
+            else {
+                $result .= $this -> load -> view ( $view , null, true);
+            }
         }
 
         if ($add_footer) {
-            $footer = $this -> load -> view ( 'footer' , $data, true );
+            if ($already_passed_data == false) {
+                $footer = $this->load->view('footer', $data, true);
+            }
+            else {
+                $footer = $this->load->view('footer', null, true);
+            }
         }
         else {
             $footer = '';
@@ -34,10 +48,16 @@ class MY_Controller extends CI_Controller {
              * so we can look into their respective asset
              * folder to insert the correspondant css and js
              */
-            $loaded_view_list = $this -> get_var('loaded_view_list');
-            $data['view_list'] = $loaded_view_list;
-
-            $header = $this -> load -> view ( 'head' , $data, true );
+            $loaded_view_list = $this -> load -> get_var('loaded_view_list');
+            if ($already_passed_data == false) {
+                $data['view_list'] = $loaded_view_list;
+                $header_data = $data;
+            }
+            else {
+                $header_data = array();
+                $header_data['view_list'] = $loaded_view_list;
+            }
+            $header = $this -> load -> view ( 'head' , $header_data, true );
 
 		}
 		else {
@@ -72,5 +92,106 @@ class MY_Controller extends CI_Controller {
 			return call_user_func_array( array( $this, $method_name ), $params );
 		}
 	}
+
+    /**
+     * @param string $class_name        The controller classname that called this method
+     * @param string $function_name     The function name that called this method
+     * @return array|void               Returns all the data that was fecthed but was
+     *                                  not intended to be autoloaded, like views
+     */
+	protected function auto_init_needed_resources($class_name = '', $function_name = '') {
+
+	    if (empty($class_name) || empty($function_name)) {
+            show_error('Either requested class_name or function_name was empty. Unable to init automatic resources. Classname: ' . $class_name . ', function_name: ' . $function_name);
+            log_message('error', 'Either requested class_name or function_name was empty. Unable to init automatic resources. Classname: ' . $class_name . ', function_name: ' . $function_name);
+            return;
+	    }
+
+        $this->load->model('controller_autoloaders/translations', 'translation_autoload');
+        $this->load->model('controller_autoloaders/models', 'models_autoload');
+        $this->load->model('controller_autoloaders/views', 'views_autoload');
+        $this->load->model('controller_autoloaders/configurations', 'configurations_autoload');
+
+	    $class = strtolower($class_name);
+        $function = strtolower($function_name);
+
+        $filter_translations = array('model_name' => $class, 'function_name' => $function, 'active' => true);
+        $translations_modelobj_array = $this->translation_autoload->getObjectList($filter_translations);
+
+        $filter_views = array('model_name' => $class, 'function_name' => $function, 'active' => true);
+        $views_modelobj_array = $this->views_autoload->getObjectList($filter_views, null, 0, 'order');
+
+        $filter_models = array('model_name' => $class, 'function_name' => $function, 'active' => true);
+        $models_modelobj_array = $this->models_autoload->getObjectList($filter_models);
+
+        $filter_configurations = array('model_name' => $class, 'function_name' => $function, 'active' => true);
+        $configurations_modelobj_array = $this->configurations_autoload->getObjectList($filter_configurations);
+        // Time to do the autoload stuff
+
+        /* loading all the needed models */
+        if (!empty($models_modelobj_array)) {
+            $models = array();
+            foreach ($models_modelobj_array as $model_to_load)
+            {
+                $this->load->model($model_to_load -> autoloaded_model_name);
+                $models[] = $model_to_load -> autoloaded_model_name;
+            }
+        }
+        else {
+            $models = null;
+        }
+
+        /* loading all the needed translations */
+        if (!empty($translations_modelobj_array)) {
+            $translations = array();
+            $idiom = $this->session->get_userdata('language');
+            foreach ($translations_modelobj_array as $translation_to_load) {
+                $this->lang->load($translation_to_load -> file_name, $idiom);
+                $translations[] = $translation_to_load -> file_name;
+            }
+        }
+        else {
+            $translations = null;
+        }
+
+        /* time to build an array with all the initials viws to load */
+        if (!empty($views_modelobj_array)) {
+            $views = array();
+            foreach ($views_modelobj_array as $key => $view_to_load) {
+                $views[$key] = $view_to_load -> view_name;
+            }
+        }
+        else {
+            $views = null;
+        }
+
+        /* loading needed configurations to pass to the views, as title, keywords, metadescription... */
+        if (!empty($configurations_modelobj_array)) {
+            $configurations = array();
+            foreach ($configurations_modelobj_array as $configuration) {
+                $configurations[$configuration -> configuration_key] = $configuration -> configuration_value;
+            }
+        }
+        else {
+            $configurations = null;
+        }
+
+        return array ('views' => $views,
+                        'models' => $models,
+                        'translations' => $translations,
+                        'configurations' => $configurations);
+
+    }
+
+    protected function autoload_views($view_array, $data) {
+
+        /* Calling the first level view that will be in charge of
+         * calling all the rest of nested views */
+        if (!empty($view_array)) {
+
+            $this->genericViewLoader($view_array, $data);
+
+        }
+    }
 
 }

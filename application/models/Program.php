@@ -1,6 +1,6 @@
 <?php
 
-class Program extends ExtendedModel {
+class Program extends MY_Model {
 
     public static $definition = array(
         'id' => array (

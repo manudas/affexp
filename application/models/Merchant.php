@@ -1,7 +1,7 @@
 <?php
 
 
-class Merchant extends ExtendedModel {
+class Merchant extends MY_Model {
 
     public static $definition = array(
         'id' => array (
@@ -18,7 +18,7 @@ class Merchant extends ExtendedModel {
         ),
         'url' => array (
             'defaultValue' => null
-        )
+        ),
         'active' => array (
             'defaultValue' => false
         )
@@ -31,6 +31,10 @@ class Merchant extends ExtendedModel {
         array('join_with' => 'Program', 
                'own_join_attribute' => 'id',
                'foreign_join_attribute' => 'id_merchant',
-               'join_operation' => '=')
+               'join_operation' => '='),
+        array('join_with' => 'Category',
+            'own_join_attribute' => 'id_category',
+            'foreign_join_attribute' => 'id',
+            'join_operation' => '=')
     );
 }

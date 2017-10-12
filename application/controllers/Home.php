@@ -4,43 +4,37 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Home extends MY_Controller {
 
 
+
 	public function index()
 	{
-        $this -> home();
+        $this -> load_home();
 	}
 
 
-	private function home() {
+	public function load_home() {
 
-	    automatizar de alguna manera los pasos que se dan abajo:
-        1 - required models to load
-        2 - required translations to load
-        tal vez se pueda hacer creando un metodo loadDefaults en MY_Controller
+	    // autoload models, translations and return views to be loaded later
+        $preprocessed_data =
+            $this -> auto_init_needed_resources(__CLASS__, __FUNCTION__);
 
-	    /* loading all the needed models */
-        $this->load->model('merchant');
-
-        /* loading all the needed translations */
-        $idiom = $this->session->get_userdata('language');
-        $this->lang->load('merchant_logo', $idiom);
-
+        /* Starting to prepare data to be passed to the views */
         /* Building up all the needed data to pass to the views */
         $offer_alt_img_text = $this->lang->line('offer_alt_img');
         $offer_title_img_text = $this->lang->line('offer_title_img');
 
         $merchant_data_list = Merchant::getList(array('active' => true), 20, 0 , 'name');
-
-        foreach ($merchant_data_list as $merchant_data) {
+        foreach ($merchant_data_list as &$merchant_data) {
             $merchant_data['imgalt'] = $offer_alt_img_text . ' ' . $merchant_data['name'];
             $merchant_data['imgtitle'] = $offer_title_img_text . ' ' . $merchant_data['name'];
         }
 
         /* Collecting all the data all the views need in a $data array */
-        $data = array('merchant_data' => $merchant_data);
+        $data = array('merchant_list' => $merchant_data_list, 'configurations' => $preprocessed_data['configurations']);
+        /* End of data preparation to be passed to the views */
 
-        /* Calling the first level view that will be in charge of
-         * calling all the rest of nested views */
-        $this -> genericViewLoader('home/home', $data);
+        // autoload views, it couldn't be autoloaded without data in the other method
+        $this -> autoload_views($preprocessed_data['views'], $data);
+
     }
 
 }

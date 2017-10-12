@@ -1,6 +1,6 @@
 <?php
 
-class Association extends ExtendedModel {
+class Association extends MY_Model {
 
     public static $definition = array(
         'id' => array (

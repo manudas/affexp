@@ -10,9 +10,8 @@
             ?>
                     <li class="index-<?php echo $i?>">
                         <a href="<?php echo $merchant_data['url']?>">
-                            <img class="lazy" src="<?php echo $merchant_data['img']?>" alt="<?php echo $merchant_data['imgalt']?>" title="<?php echo $merchant_data['imgtitle']?>" width="89" height="89" />
+                            <img class="lazy" src="<?php echo base_url().$merchant_data['img']?>" alt="<?php echo $merchant_data['imgalt']?>" title="<?php echo $merchant_data['imgtitle']?>" width="89" height="89" />
                         </a>
-                        <?php echo "borrar item?: ".$item;?>
                     </li>
             <?php 
                 endfor;

@@ -1,6 +1,6 @@
 <?php
 
-class Category extends ExtendedModel {
+class Category extends MY_Model {
 
     public static $definition = array(
         'id' => array (

@@ -215,7 +215,8 @@ class MY_Lang extends CI_Lang {
             $file_counter = count($this->is_loaded);
             if ($file_counter !== 1)
             {
-                log_message('error', 'Unable to get the line for the unspecified file. Please select the file from which you want to load the line '. $line .' for the language '.$idiom);
+                log_message('error', 'Unable to get the line for the unspecified file. Please select the file from which you want to load the line '
+                                            . $line .' or verify that a translation for the user language is available' );
             }
             else {
                 reset($this->is_loaded);

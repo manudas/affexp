@@ -2,8 +2,16 @@
 
 class MY_Model extends CI_Model {
 
-    public static $model_table = __CLASS__;
+    private static $model_table = null;
 
+    public static function getModelTable() {
+        if (!empty(static::$model_table)) {
+            return static::$model_table;
+        }
+        else {
+            return strtolower(static::class);
+        }
+    }
     /* array in the following format:
         array (
             'propertyname1' => array ('defaultValue' => 'amount',  // default value, can be null or whatever allowed value  
@@ -29,16 +37,29 @@ class MY_Model extends CI_Model {
     */
     protected static $joinable = array();
 
-    public function __construct($param, $table = __CLASS__) {
+    public function __construct($param = null, $table = null) {
         parent::__construct();
               
         if (!empty($table)) {
-            static::$model_table = $table;
+            self::$model_table = strtolower($table);
+        }
+        else {
+            self::$model_table = strtolower(static::class);
         }
 
-        if (!empty($param)){
+        if (!empty($param)) {
+            $this -> setData($param);
+        }
+        else {
             $this -> setDefaultValues();
-            $this -> buildObject($param);
+        }
+
+    }
+
+    public function setData($params = null) {
+        if (!empty($params)){
+            $this -> setDefaultValues();
+            $this -> buildObject($params);
         }
     }
 
@@ -66,7 +87,7 @@ class MY_Model extends CI_Model {
     private function buildObjectFromID($id){
         $this -> db -> select ( '*' );
 
-        $this -> db -> from ( strtolower(static::$model_table) );
+        $this -> db -> from ( self::getModelTable() );
 
         $this -> db -> where ( 'id' , $id );
         $query_result = $this -> db -> get() -> result_array();
@@ -84,18 +105,18 @@ class MY_Model extends CI_Model {
 
     private function add(){
         $this -> db -> set($this);
-        $this -> db -> insert( strtolower(static::$model_table) );
+        $this -> db -> insert( self::getModelTable() );
     }
 
     private function update(){
         $this -> db -> set($this);
-        $this -> db -> update( strtolower(static::$model_table) );
+        $this -> db -> update( self::getModelTable() );
     }
 
-    public static function getList($filter = null, $limit = null, $offset = 0, $order_by = null, $ordenation = 'ASC', $table = __CLASS__){
+    public static function getList($filter = null, $limit = null, $offset = 0, $order_by = null, $ordenation = 'ASC', $table = null){
                 
         if (!empty($table)) {
-            static::$model_table = $table;
+            self::$model_table = strtolower($table);
         }
 
         $instance = &get_instance();
@@ -103,13 +124,13 @@ class MY_Model extends CI_Model {
         $instance -> db -> select ( '*' );
         $instance -> db -> where ( $filter );
         $instance -> db -> limit ( $limit, $offset );
-        $instance -> db -> from ( strtolower(static::$model_table) );
+        $instance -> db -> from ( self::getModelTable() );
         $instance -> db -> order_by ( $order_by, $ordenation );
         $query_result = $instance -> db -> get() -> result_array();
         return $query_result;
     }
 
-    public static function getObjectList($filter = null, $limit = null, $offset = 0, $order_by = null, $ordenation = 'ASC', $table = __CLASS__){
+    public static function getObjectList($filter = null, $limit = null, $offset = 0, $order_by = null, $ordenation = 'ASC', $table = null){
         $object_list = array();
         $results = self::getList($filter, $limit, $offset, $order_by, $ordenation, $table);
         foreach ($results as $result) {
@@ -169,7 +190,7 @@ class MY_Model extends CI_Model {
         $this -> db -> select ( '*' );
         $this -> db -> where ( 'a0.id = ' . $this -> id );
 		$this -> db -> limit ( $limit, $offset );
-        $this -> db -> from ( strtolower(static::$model_table) . ' as a0');
+        $this -> db -> from ( self::getModelTable() . ' as a0');
         $this -> db -> order_by ( $order_by, $ordenation );
 
 
@@ -190,10 +211,10 @@ class MY_Model extends CI_Model {
     *                                               classes in the same format.
     *                                               Empty or null if no sub list
     */
-    private static function getJoinClausules($list_of_joined_classes, $current_alias = 0, $table = __CLASS__){
+    private static function getJoinClausules($list_of_joined_classes, $current_alias = 0, $table = null){
 
         if (!empty($table)) {
-            static::$model_table = $table;
+            static::$model_table = strtolower($table);
         }
         
         $join_clausule_list = array();
@@ -224,15 +245,15 @@ class MY_Model extends CI_Model {
                 $foreign_alias = 'a'. ( $current_alias + 1 );
                 
                 $operation = $current_joinable['join_operation'];
-                $own_table = static::$model_table . ' as ' . $own_alias;
-                $foreign_table = $class_to_join::$model_table . ' as ' . $foreign_alias;
+                $own_table = self::getModelTable() . ' as ' . $own_alias;
+                $foreign_table = $class_to_join::getModelTable() . ' as ' . $foreign_alias;
 
                 $current_joining_data = array('aliased_own_table' => $own_table,
                                             'own_alias' => $own_alias,
-                                            'own_table' => static::$model_table,
+                                            'own_table' => self::getModelTable(),
                                             'aliased_foreign_table' => $foreign_table, 
                                             'foreign_alias' => $foreign_alias,
-                                            'foreign_table' => $class_to_join::$model_table,
+                                            'foreign_table' => $class_to_join::getModelTable(),
                                             'aliased_own_join_attribute' => $own_alias.'.'.$current_joinable['own_join_attribute'],
                                             'aliased_foreign_join_attribute' => $foreign_alias.'.'.$current_joinable['foreign_join_attribute'],
                                             'join_operation' => $current_joinable['join_operation'],
@@ -297,7 +318,7 @@ class MY_Model extends CI_Model {
             $this -> db -> select ( $alias.'.*' );
             $this -> db -> where ( 'a0.id = ' . $this -> id );
             $this -> db -> limit ( $limit, $offset );
-            $this -> db -> from ( strtolower(static::$model_table) . ' as a0');
+            $this -> db -> from ( self::getModelTable() . ' as a0');
             $this -> db -> order_by ( $order_by, $ordenation );
 
 
@@ -306,7 +327,7 @@ class MY_Model extends CI_Model {
             return $this -> db -> get() -> result_array();
         }
         else {
-            $error_string = "Can't join data tables/classes: " . static::$model_table . ' with ' . $join_with;
+            $error_string = "Can't join data tables/classes: " . self::getModelTable() . ' with ' . $join_with;
             log_message('error', $error_string);
             show_error($error_string, 500); // returns error 500
             throw RuntimeException($error_string);

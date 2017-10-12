@@ -1,6 +1,6 @@
 <?php
 
-class Network extends ExtendedModel {
+class Network extends MY_Model {
 
     public static $definition = array(
         'id' => array (

@@ -1,6 +1,6 @@
 <?php
 
-class Product extends ExtendedModel {
+class Product extends MY_Model {
 
     public static $definition = array(
         'id' => array (
