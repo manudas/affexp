@@ -13,9 +13,10 @@ class Home extends MY_Controller {
 
 	public function load_home() {
 
-	    // autoload models, translations and return views to be loaded later
+	    // autoload models, translations and return views to be loaded later.
+        // We only need configurations, models, views and tranlations here.
         $preprocessed_data =
-            $this -> auto_init_needed_resources(__CLASS__, __FUNCTION__);
+            $this -> auto_init_needed_resources(__CLASS__, __FUNCTION__, array('configurations', 'models', 'translations', 'views'));
 
         /* Starting to prepare data to be passed to the views */
         /* Building up all the needed data to pass to the views */

@@ -99,7 +99,7 @@ class MY_Controller extends CI_Controller {
      * @return array|void               Returns all the data that was fecthed but was
      *                                  not intended to be autoloaded, like views
      */
-	protected function auto_init_needed_resources($class_name = '', $function_name = '') {
+	protected function auto_init_needed_resources($class_name = '', $function_name = '', $autoload_models = array('configurations', 'models', 'translations', 'links', 'views')) {
 
 	    if (empty($class_name) || empty($function_name)) {
             show_error('Either requested class_name or function_name was empty. Unable to init automatic resources. Classname: ' . $class_name . ', function_name: ' . $function_name);
@@ -107,25 +107,36 @@ class MY_Controller extends CI_Controller {
             return;
 	    }
 
-        $this->load->model('controller_autoloaders/translations', 'translation_autoload');
-        $this->load->model('controller_autoloaders/models', 'models_autoload');
-        $this->load->model('controller_autoloaders/views', 'views_autoload');
-        $this->load->model('controller_autoloaders/configurations', 'configurations_autoload');
-
-	    $class = strtolower($class_name);
+        $class = strtolower($class_name);
         $function = strtolower($function_name);
 
-        $filter_translations = array('model_name' => $class, 'function_name' => $function, 'active' => true);
-        $translations_modelobj_array = $this->translation_autoload->getObjectList($filter_translations);
+        if (in_array('models', $autoload_models)) {
+            $this->load->model('controller_autoloaders/models', 'models_autoload');
+            $filter_models = array('model_name' => $class, 'function_name' => $function, 'active' => true);
+            $models_modelobj_array = $this->models_autoload->getObjectList($filter_models);
 
-        $filter_views = array('model_name' => $class, 'function_name' => $function, 'active' => true);
-        $views_modelobj_array = $this->views_autoload->getObjectList($filter_views, null, 0, 'order');
+        }
+	    if (in_array('configurations', $autoload_models)) {
+            $this->load->model('controller_autoloaders/configurations', 'configurations_autoload');
+            $filter_configurations = array('model_name' => $class, 'function_name' => $function, 'active' => true);
+            $configurations_modelobj_array = $this->configurations_autoload->getObjectList($filter_configurations);
+        }
+        if (in_array('translations', $autoload_models)) {
+            $this->load->model('controller_autoloaders/translations', 'translations_autoload');
+            $filter_translations = array('model_name' => $class, 'function_name' => $function, 'active' => true);
+            $translations_modelobj_array = $this->translation_autoload->getObjectList($filter_translations);
+        }
+        if (in_array('views', $autoload_models)) {
+            $this->load->model('controller_autoloaders/views', 'views_autoload');
+            $filter_views = array('model_name' => $class, 'function_name' => $function, 'active' => true);
+            $views_modelobj_array = $this->views_autoload->getObjectList($filter_views, null, 0, 'order');
+        }
+        if (in_array('links', $autoload_models)) {
+            $this->load->model('controller_autoloaders/links', 'links_autoload');
+            $filter_links = array('model_name' => $class, 'function_name' => $function, 'active' => true);
+            $links_modelobj_array = $this->links_autoload->getObjectList($filter_links, null, 0, 'order');
+        }
 
-        $filter_models = array('model_name' => $class, 'function_name' => $function, 'active' => true);
-        $models_modelobj_array = $this->models_autoload->getObjectList($filter_models);
-
-        $filter_configurations = array('model_name' => $class, 'function_name' => $function, 'active' => true);
-        $configurations_modelobj_array = $this->configurations_autoload->getObjectList($filter_configurations);
         // Time to do the autoload stuff
 
         /* loading all the needed models */
@@ -176,10 +187,18 @@ class MY_Controller extends CI_Controller {
             $configurations = null;
         }
 
+        if (!empty($links_modelobj_array)) {
+            $links = $links_modelobj_array;
+        }
+        else {
+            $links = null;
+        }
+
         return array ('views' => $views,
                         'models' => $models,
                         'translations' => $translations,
-                        'configurations' => $configurations);
+                        'configurations' => $configurations,
+                        'links' => $links);
 
     }
 

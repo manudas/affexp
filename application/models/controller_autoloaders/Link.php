@@ -1,16 +1,28 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: manu
- * Date: 11/10/17
- * Time: 23:10
+ * User: manuel.pulgar
+ * Date: 13/10/17
+ * Time: 10:28
  */
 
-class Views extends MY_Model {
+class Link extends MY_Model {
 
     public static $definition = array(
         'id' => array (
             'defaultValue' => null
+        ),
+        'name' => array (
+            'defaultValue' => null
+        ),
+        'url' => array (
+            'defaultValue' => null
+        ),
+        'category_token' => array (
+            'defaultValue' => null
+        ),
+        'order' => array (
+            'defaultValue' => 0
         ),
         'model_name' => array (
             'defaultValue' => null
@@ -18,14 +30,9 @@ class Views extends MY_Model {
         'function_name' => array (
             'defaultValue' => null
         ),
-        'view_name' => array (
-            'defaultValue' => null
-        ),
-        'order' => array (
-            'defaultValue' => 0
-        ),
         'active' => array (
             'defaultValue' => false
         )
     );
+
 }
