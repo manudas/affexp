@@ -99,7 +99,7 @@ class MY_Controller extends CI_Controller {
      * @return array|void               Returns all the data that was fecthed but was
      *                                  not intended to be autoloaded, like views
      */
-	protected function auto_init_needed_resources($class_name = '', $function_name = '', $autoload_models = array('configurations', 'models', 'translations', 'links', 'views')) {
+	protected function auto_init_needed_resources($class_name = '', $function_name = '', $autoload_models = array('configurations', 'models', 'translations', 'links', 'views'), $init_defaults_views = true /*head and footer */) {
 
 	    if (empty($class_name) || empty($function_name)) {
             show_error('Either requested class_name or function_name was empty. Unable to init automatic resources. Classname: ' . $class_name . ', function_name: ' . $function_name);
