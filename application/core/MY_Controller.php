@@ -101,6 +101,23 @@ class MY_Controller extends CI_Controller {
      */
 	protected function auto_init_needed_resources($class_name = '', $function_name = '', $autoload_models = array('configurations', 'models', 'translations', 'links', 'views'), $init_defaults_views = true /*head and footer */) {
 
+
+
+
+
+
+
+
+	    mirar de eliminar common y de pasar todo a esta clase
+
+
+
+
+
+
+
+
+
 	    if (empty($class_name) || empty($function_name)) {
             show_error('Either requested class_name or function_name was empty. Unable to init automatic resources. Classname: ' . $class_name . ', function_name: ' . $function_name);
             log_message('error', 'Either requested class_name or function_name was empty. Unable to init automatic resources. Classname: ' . $class_name . ', function_name: ' . $function_name);
@@ -116,11 +133,13 @@ class MY_Controller extends CI_Controller {
             $models_modelobj_array = $this->models_autoload->getObjectList($filter_models);
 
         }
+
 	    if (in_array('configurations', $autoload_models)) {
             $this->load->model('controller_autoloaders/configurations', 'configurations_autoload');
             $filter_configurations = array('model_name' => $class, 'function_name' => $function, 'active' => true);
             $configurations_modelobj_array = $this->configurations_autoload->getObjectList($filter_configurations);
         }
+
         if (in_array('translations', $autoload_models)) {
             $this->load->model('controller_autoloaders/translations', 'translations_autoload');
             $filter_translations = array('model_name' => $class, 'function_name' => $function, 'active' => true);
@@ -135,6 +154,50 @@ class MY_Controller extends CI_Controller {
             $this->load->model('controller_autoloaders/links', 'links_autoload');
             $filter_links = array('model_name' => $class, 'function_name' => $function, 'active' => true);
             $links_modelobj_array = $this->links_autoload->getObjectList($filter_links, null, 0, 'order');
+        }
+
+        if ($init_defaults_views == true) {
+
+            AÑADIMOS DEFAULTS
+
+            $filter_configurations_defaults = array('model_name' => 'default', 'function_name' => 'default', 'active' => true);
+            $configurations_defaults_modelobj_array = $this->models_autoload->getObjectList($filter_configurations_defaults);
+            if (!empty($configurations_modelobj_array)) {
+                $configurations_modelobj_array = array_merge($configurations_modelobj_array, $configurations_defaults_modelobj_array);
+            }
+
+            $filter_models_defaults = array('model_name' => 'default', 'function_name' => 'default', 'active' => true);
+            $models_defaults_modelobj_array = $this->models_autoload->getObjectList($filter_models_defaults);
+            if (!empty($models_modelobj_array)) {
+                $models_modelobj_array = array_merge($models_modelobj_array, $models_defaults_modelobj_array);
+            }
+
+            $filter_translations_defaults = array('model_name' => 'default', 'function_name' => 'default', 'active' => true);
+            $translations_defaults_modelobj_array = $this->translation_autoload->getObjectList($filter_translations_defaults);
+            if (!empty($translations_modelobj_array)) {
+                $translations_modelobj_array = array_merge($translations_modelobj_array, $translations_defaults_modelobj_array);
+            }
+
+
+            quitar y cogerlo de $configurations defaults ??
+            $filter_views_previous_defaults = array('model_name' => 'default', 'function_name' => 'previous', 'active' => true);
+            $views_previous_defaults_modelobj_array = $this->views_autoload->getObjectList($filter_views_previous_defaults, null, 0, 'order');
+
+
+            if (!empty($views_modelobj_array)) {
+                $views_modelobj_array = array_merge($views_modelobj_array, $views_defaults_modelobj_array);
+            }
+
+            $filter_views_post_defaults = array('model_name' => 'default', 'function_name' => 'post', 'active' => true);
+            $views_post_defaults_modelobj_array = $this->views_autoload->getObjectList($filter_views_post_defaults, null, 0, 'order');
+    fin quitar??
+
+
+            $filter_links_defaults = array('model_name' => 'default', 'function_name' => 'default', 'active' => true);
+            $links_defaults_modelobj_array = $this->links_autoload->getObjectList($filter_links_defaults, null, 0, 'order');
+            if (!empty($links_modelobj_array)) {
+                $links_modelobj_array = array_merge($links_modelobj_array, $links_defaults_modelobj_array);
+            }
         }
 
         // Time to do the autoload stuff
@@ -165,17 +228,6 @@ class MY_Controller extends CI_Controller {
             $translations = null;
         }
 
-        /* time to build an array with all the initials viws to load */
-        if (!empty($views_modelobj_array)) {
-            $views = array();
-            foreach ($views_modelobj_array as $key => $view_to_load) {
-                $views[$key] = $view_to_load -> view_name;
-            }
-        }
-        else {
-            $views = null;
-        }
-
         /* loading needed configurations to pass to the views, as title, keywords, metadescription... */
         if (!empty($configurations_modelobj_array)) {
             $configurations = array();
@@ -186,6 +238,31 @@ class MY_Controller extends CI_Controller {
         else {
             $configurations = null;
         }
+
+        /* time to build an array with all the initials viws to load */
+        if (!empty($views_modelobj_array)) {
+            $views = array();
+            foreach ($views_modelobj_array as $key => $view_to_load) {
+                $views[$key] = $view_to_load -> view_name;
+            }
+        }
+        else {
+            $views = null;
+        }
+        if (($init_defaults_views == true) && ((!empty($configurations['previous_views'])) || (!empty($configurations['post_views'])))){
+
+            quitar y coger default views?? o dejar asi? cual es mejor sistema?
+            if ($views == null) {
+                $views = array();
+            }
+            if ( !empty($configurations['previous_views'] ) ) {
+                array_unshift($views, $configurations['previous_views']); // añade elemento al principio del array
+            }
+            if ( !empty($configurations['post_views'] ) ) {
+                array_push($views, $configurations['post_views']); // añade elemento al final del array
+            }
+        }
+
 
         if (!empty($links_modelobj_array)) {
             $links = $links_modelobj_array;

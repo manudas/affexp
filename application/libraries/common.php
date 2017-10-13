@@ -4,6 +4,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Common
 {
 
+
+    CREO Q NO SE NECESITA ESTA LIBRERIA. SE PUEDE AÑADIR A MI CONTROLLER Y Y USAR
+
+$this -> auto_init_needed_resources(self::class, __FUNCTION__, array('configurations', 'translations', 'views'));
+
+    INSTEAD OF
+
+$this -> auto_init_needed_resources(static::class, __FUNCTION__, array('configurations', 'translations', 'views'));
+
+    PARA OBTENER TODOS LOS RECURSOS NECESARIOS COMUNES A TODAS LAS PAGINAS
+
+
+
+
+
+
+
     protected $CI;
 
     // We'll use a constructor, as you can't directly call a function
