@@ -1,0 +1,7 @@
+@font-face {
+    font-family: "mvcmoon";
+    font-style: normal;
+    font-weight: normal;
+    src: url('{project_url}assets/styles/mvcmoon.eot') format("embedded-opentype"), url('{project_url}assets/styles/mvcmoon.woff') format("woff"), url('{project_url}assets/styles/mvcmoon.ttf') format("truetype");
+}
+

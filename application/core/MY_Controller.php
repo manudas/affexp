@@ -30,7 +30,7 @@ class MY_Controller extends CI_Controller {
         );
 
     public static function getOrdenation($autoloadable_resource_model) {
-        if (($autoloadable_resource_model == 'view') || ($autoloadable_resource_model == 'links')) {
+        if (($autoloadable_resource_model == 'views') || ($autoloadable_resource_model == 'links')) {
             $ordenation = 'order';
             $ordenation_type = 'ASC';
         }

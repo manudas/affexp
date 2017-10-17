@@ -5,13 +5,31 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 ol, ul { list-style: outside none none; }
 
 img { border: 0px none; }
-
+/*
 #HomeMerchantLogos { position: absolute; top: 0px; width: 100%; clear: both; }
 #HomeMerchantLogos ul { height: 192px; position: relative; margin-left: 91px; }
+*/
+
+#HomeMerchantLogos { width: 100%; clear: both; font-size: 0 }
+
+#HomeMerchantLogos > div {
+	width: 100%;
+}
+#HomeMerchantLogos ul { width:100%; display: block; padding-top: 10px;}
+#HomeMerchantLogos li { width: 10%; padding-bottom: 10px; margin:0; display: inline-flex; }
+#HomeMerchantLogos a { margin-right: auto; margin-left: auto; }
+
+
+
+
+
+
+/*
 #HomeMerchantLogos li { width: 11.1%; padding-bottom: 10px; float: left; }
 #HomeMerchantLogos a { float: right; }
 #HomeMerchantLogos .index-0, #HomeMerchantLogos .index-10, .skyscrapers_on #HomeMerchantLogos .index-0, .skyscrapers_on #HomeMerchantLogos .index-10 { position: absolute; left: -91px; width: 91px; padding-bottom: 0px; }
 #HomeMerchantLogos .index-10 { bottom: 0px; }
+*/
 #HomeMerchantLogos a { position: relative; width: 91px; height: 91px; }
 #HomeMerchantLogos img { position: absolute; top: 0px; display: block; border: 1px solid rgb(210, 210, 210); border-radius: 4px; box-shadow: 0px 2px rgba(0, 0, 0, 0.05); transition: all 0.1s ease 0s; }
 #HomeMerchantLogos img:hover { top: -5px; border-bottom: 3px solid rgb(204, 204, 204); }

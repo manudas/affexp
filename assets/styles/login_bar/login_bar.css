@@ -110,12 +110,6 @@ ul {
 }
 
 
-@font-face {
-	font-family: "mvcmoon";
-	font-style: normal;
-	font-weight: normal;
-	src: url('mvcmoon.eot') format("embedded-opentype"), url('mvcmoon.woff') format("woff"), url('mvcmoon.ttf') format("truetype");
-}
 
 
 .icon-cat-d,
