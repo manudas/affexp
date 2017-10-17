@@ -24,8 +24,8 @@
                                 <?php
                                 }
                                 if (ENVIRONMENT != 'production') {
-                                    if (empty($configurations['log.o_bar']) || !file_exists(FCPATH.$configurations['logo_bar'])) {
-                                        echo "<span class='Header-logo-logo' >WARNING: Logo not found in config table or missing logo file</span>";
+                                    if (empty($configurations['logo_bar']) || !file_exists(FCPATH.$configurations['logo_bar'])) {
+                                        echo "<span class='Header-logo-logo' >DEV WARNING: Insert Logo</span>";
                                     }
                                 }
                                 ?>
