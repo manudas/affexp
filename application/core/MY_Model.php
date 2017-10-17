@@ -2,11 +2,11 @@
 
 class MY_Model extends CI_Model {
 
-    private static $model_table = null;
+    protected static $model_table_arr = array();
 
     public static function getModelTable() {
-        if (!empty(static::$model_table)) {
-            return static::$model_table;
+        if (!empty(self::$model_table_arr[static::class])) {
+            return self::$model_table_arr[static::class];
         }
         else {
             return strtolower(static::class);
@@ -39,12 +39,12 @@ class MY_Model extends CI_Model {
 
     public function __construct($param = null, $table = null) {
         parent::__construct();
-              
+            
         if (!empty($table)) {
-            self::$model_table = strtolower($table);
+            self::$model_table_arr[static::class] = strtolower($table);
         }
         else {
-            self::$model_table = strtolower(static::class);
+            self::$model_table_arr[static::class] = strtolower(static::class);
         }
 
         if (!empty($param)) {
@@ -116,7 +116,7 @@ class MY_Model extends CI_Model {
     public static function getList($filter = null, $limit = null, $offset = 0, $order_by = null, $ordenation = 'ASC', $table = null){
                 
         if (!empty($table)) {
-            self::$model_table = strtolower($table);
+            self::$model_table_arr[static::class] = strtolower($table);
         }
 
         $instance = &get_instance();
@@ -134,7 +134,7 @@ class MY_Model extends CI_Model {
         $object_list = array();
         $results = self::getList($filter, $limit, $offset, $order_by, $ordenation, $table);
         foreach ($results as $result) {
-            $current_class = get_class();
+            $current_class = static::class;
             $object_list[] = new $current_class($result);
         }
         return $object_list;
@@ -214,7 +214,7 @@ class MY_Model extends CI_Model {
     private static function getJoinClausules($list_of_joined_classes, $current_alias = 0, $table = null){
 
         if (!empty($table)) {
-            static::$model_table = strtolower($table);
+            $model_table_arr[static::class] = strtolower($table);
         }
         
         $join_clausule_list = array();

@@ -12,6 +12,35 @@ class MY_Controller extends CI_Controller {
 
     }
 */
+
+    public static $AUTOLOADABLE_RESOURCES = array(
+                                                    'configurations',
+                                                    'models',
+                                                    'translations',
+                                                    'links',
+                                                    'views'
+    );
+
+    private static $AUTOLOADABLE_RESOURCES_INIT_FUNCTION = array (
+            'configurations' => 'build_configuration_array',
+            'models' => 'auto_init_models',
+            'translations' => 'auto_init_translations',
+            'links' => '', // empty if no processing is required
+            'views' => 'build_views_array'
+        );
+
+    public static function getOrdenation($autoloadable_resource_model) {
+        if (($autoloadable_resource_model == 'view') || ($autoloadable_resource_model == 'links')) {
+            $ordenation = 'order';
+            $ordenation_type = 'ASC';
+        }
+        else {
+            $ordenation = null;
+            $ordenation_type = null;
+        }
+        return array ('ordenation' => $ordenation, 'ordenation_type' => $ordenation_type);
+    }
+
 	protected function genericViewLoader ($view_list, $data = array(), $add_header = true, $add_footer = true, $return_view = false) {
 
 		$result = "";
@@ -86,7 +115,7 @@ class MY_Controller extends CI_Controller {
 
 		if(!method_exists($this, $method_name)){
 			return call_user_func_array( array( $this, 'index' ), array_merge( array($method_name), $params ) );
-			$this -> index();
+			// $this -> index();
 		}
 		else{
 			return call_user_func_array( array( $this, $method_name ), $params );
@@ -96,27 +125,117 @@ class MY_Controller extends CI_Controller {
     /**
      * @param string $class_name        The controller classname that called this method
      * @param string $function_name     The function name that called this method
-     * @return array|void               Returns all the data that was fecthed but was
+     * @return array                    Returns all the data that was fecthed but was
      *                                  not intended to be autoloaded, like views
      */
-	protected function auto_init_needed_resources($class_name = '', $function_name = '', $autoload_models = array('configurations', 'models', 'translations', 'links', 'views'), $init_defaults_views = true /*head and footer */) {
+	protected function auto_init_needed_resources($class_name = '', $function_name = '', $autoload_models = null, $init_defaults_views = true /*head and footer */) {
+	    $resources = $this -> getAutoloadableResources($class_name, $function_name, $autoload_models, $init_defaults_views);
+        $result = $this -> _auto_init_resources($resources);
+        return $result;
+	}
+
+	private function _auto_init_resources($resources) {
+        $result = null;
+	    if (!empty($resources)) {
+	        $result = array();
+            foreach ($resources as $resource_key => $resource) {
+                $function = self::$AUTOLOADABLE_RESOURCES_INIT_FUNCTION[$resource_key];
+                if (is_callable(array($this, $function))) {
+                    $result [$resource_key] = $this -> $function($resource);
+                }
+                else { // maybe empty function, and doesn't need processing (like links)
+                    $result [$resource_key] = $resource;
+                }
+
+            }
+        }
+        return $result;
+    }
 
 
+    public function auto_init_models ( $models ) {
+        $result_name_arr = null;
+        if ( !empty( $models ) ) {
+            $result_name_arr = array();
+            foreach ( $models as $model_to_load ) {
+                $this -> load -> model ( $model_to_load -> autoloaded_model_name );
+                $result_name_arr[] = $model_to_load -> autoloaded_model_name;
+            }
+        }
+        return $result_name_arr;
+    }
 
+    public function auto_init_translations ( $translations ) {
+        if ( !empty( $translations ) ) {
+            $idiom = $this -> session -> get_userdata ( 'language' );
+            foreach ( $translations as $translation_to_load ) {
+                $this -> lang -> load ( $translation_to_load -> file_name, $idiom );
+            }
+        }
+    }
 
+    public function build_configuration_array ($configurations) {
+        $configurations_arr = null;
+        if (!empty($configurations)) {
+            $configurations_arr = array();
+            foreach ($configurations as $configuration) {
+                $configurations_arr[$configuration -> configuration_key] = $configuration -> configuration_value;
+            }
+        }
+        return $configurations_arr;
+    }
 
+    public function build_views_array ($views) {
+        $views_arr = null;
+        if (!empty($views)) {
+            $previous_views = null;
+            $inner_views = null;
+            $posterior_views = null;
+            foreach ($views as $view) {
+                if ( ( $view -> model_name == 'default' ) && ( $view -> function_name == 'previous' ) ) {
+                    if (!isset($previous_views)) {
+                        $previous_views = array();
+                    }
+                    $previous_views [ $view -> order ] = $view -> view_name;
+                }
 
+                else if ( ( $view -> model_name == 'default' ) && ( $view -> function_name == 'posterior' ) ) {
+                    if (!isset($posterior_views)) {
+                        $posterior_views = array();
+                    }
+                    $posterior_views [ $view -> order ] = $view -> view_name;
+                }
 
+                else {
+                    if (!isset($inner_views)) {
+                        $inner_views = array();
+                    }
+                    $inner_views [ $view -> order ] = $view -> view_name;
+                }
+            }
 
-	    mirar de eliminar common y de pasar todo a esta clase
+            if (!empty($previous_views)) {
+                $views_arr = $previous_views;
+            }
 
+            if (!empty($views_arr) && !empty($inner_views)) {
+                $views_arr = array_merge($views_arr, $inner_views);
+            }
+            else if (!empty($inner_views)) {
+                $views_arr = $inner_views;
+            }
 
+            if (!empty($views_arr) && !empty($posterior_views)) {
+                $views_arr = array_merge($views_arr, $posterior_views);
+            }
+            else if (!empty($posterior_views)) {
+                $views_arr = $posterior_views;
+            }
+        }
+        return $views_arr;
+    }
 
-
-
-
-
-
+	protected function getAutoloadableResources($class_name = '', $function_name = '', $autoload_models = null, $init_defaults_views = true /*head and footer */) {
 
 	    if (empty($class_name) || empty($function_name)) {
             show_error('Either requested class_name or function_name was empty. Unable to init automatic resources. Classname: ' . $class_name . ', function_name: ' . $function_name);
@@ -124,160 +243,59 @@ class MY_Controller extends CI_Controller {
             return;
 	    }
 
+	    if ( empty($autoload_models) ) {
+	        $autoload_models = self::$AUTOLOADABLE_RESOURCES;
+        }
+
+
         $class = strtolower($class_name);
         $function = strtolower($function_name);
 
-        if (in_array('models', $autoload_models)) {
-            $this->load->model('controller_autoloaders/models', 'models_autoload');
-            $filter_models = array('model_name' => $class, 'function_name' => $function, 'active' => true);
-            $models_modelobj_array = $this->models_autoload->getObjectList($filter_models);
+        $filter = array('model_name' => $class, 'function_name' => $function, 'active' => true);
 
-        }
-
-	    if (in_array('configurations', $autoload_models)) {
-            $this->load->model('controller_autoloaders/configurations', 'configurations_autoload');
-            $filter_configurations = array('model_name' => $class, 'function_name' => $function, 'active' => true);
-            $configurations_modelobj_array = $this->configurations_autoload->getObjectList($filter_configurations);
-        }
-
-        if (in_array('translations', $autoload_models)) {
-            $this->load->model('controller_autoloaders/translations', 'translations_autoload');
-            $filter_translations = array('model_name' => $class, 'function_name' => $function, 'active' => true);
-            $translations_modelobj_array = $this->translation_autoload->getObjectList($filter_translations);
-        }
-        if (in_array('views', $autoload_models)) {
-            $this->load->model('controller_autoloaders/views', 'views_autoload');
-            $filter_views = array('model_name' => $class, 'function_name' => $function, 'active' => true);
-            $views_modelobj_array = $this->views_autoload->getObjectList($filter_views, null, 0, 'order');
-        }
-        if (in_array('links', $autoload_models)) {
-            $this->load->model('controller_autoloaders/links', 'links_autoload');
-            $filter_links = array('model_name' => $class, 'function_name' => $function, 'active' => true);
-            $links_modelobj_array = $this->links_autoload->getObjectList($filter_links, null, 0, 'order');
+        foreach ($autoload_models as $model) {
+            $this->load->model('controller_autoloaders/'.$model, $model.'_autoload');
+            $ordenation = self::getOrdenation($model);
+            ${$model.'_modelobj_array'} = $this -> {$model.'_autoload'} -> getObjectList($filter,
+                                                                                            null,
+                                                                                            0,
+                                                                                            $ordenation['ordenation'],
+                                                                                            $ordenation['ordenation_type']);
         }
 
         if ($init_defaults_views == true) {
 
-            AÑADIMOS DEFAULTS
+            $filter_defaults = array('model_name' => 'default', 'active' => true);
 
-            $filter_configurations_defaults = array('model_name' => 'default', 'function_name' => 'default', 'active' => true);
-            $configurations_defaults_modelobj_array = $this->models_autoload->getObjectList($filter_configurations_defaults);
-            if (!empty($configurations_modelobj_array)) {
-                $configurations_modelobj_array = array_merge($configurations_modelobj_array, $configurations_defaults_modelobj_array);
-            }
-
-            $filter_models_defaults = array('model_name' => 'default', 'function_name' => 'default', 'active' => true);
-            $models_defaults_modelobj_array = $this->models_autoload->getObjectList($filter_models_defaults);
-            if (!empty($models_modelobj_array)) {
-                $models_modelobj_array = array_merge($models_modelobj_array, $models_defaults_modelobj_array);
-            }
-
-            $filter_translations_defaults = array('model_name' => 'default', 'function_name' => 'default', 'active' => true);
-            $translations_defaults_modelobj_array = $this->translation_autoload->getObjectList($filter_translations_defaults);
-            if (!empty($translations_modelobj_array)) {
-                $translations_modelobj_array = array_merge($translations_modelobj_array, $translations_defaults_modelobj_array);
-            }
-
-
-            quitar y cogerlo de $configurations defaults ??
-            $filter_views_previous_defaults = array('model_name' => 'default', 'function_name' => 'previous', 'active' => true);
-            $views_previous_defaults_modelobj_array = $this->views_autoload->getObjectList($filter_views_previous_defaults, null, 0, 'order');
-
-
-            if (!empty($views_modelobj_array)) {
-                $views_modelobj_array = array_merge($views_modelobj_array, $views_defaults_modelobj_array);
-            }
-
-            $filter_views_post_defaults = array('model_name' => 'default', 'function_name' => 'post', 'active' => true);
-            $views_post_defaults_modelobj_array = $this->views_autoload->getObjectList($filter_views_post_defaults, null, 0, 'order');
-    fin quitar??
-
-
-            $filter_links_defaults = array('model_name' => 'default', 'function_name' => 'default', 'active' => true);
-            $links_defaults_modelobj_array = $this->links_autoload->getObjectList($filter_links_defaults, null, 0, 'order');
-            if (!empty($links_modelobj_array)) {
-                $links_modelobj_array = array_merge($links_modelobj_array, $links_defaults_modelobj_array);
-            }
-        }
-
-        // Time to do the autoload stuff
-
-        /* loading all the needed models */
-        if (!empty($models_modelobj_array)) {
-            $models = array();
-            foreach ($models_modelobj_array as $model_to_load)
-            {
-                $this->load->model($model_to_load -> autoloaded_model_name);
-                $models[] = $model_to_load -> autoloaded_model_name;
-            }
-        }
-        else {
-            $models = null;
-        }
-
-        /* loading all the needed translations */
-        if (!empty($translations_modelobj_array)) {
-            $translations = array();
-            $idiom = $this->session->get_userdata('language');
-            foreach ($translations_modelobj_array as $translation_to_load) {
-                $this->lang->load($translation_to_load -> file_name, $idiom);
-                $translations[] = $translation_to_load -> file_name;
-            }
-        }
-        else {
-            $translations = null;
-        }
-
-        /* loading needed configurations to pass to the views, as title, keywords, metadescription... */
-        if (!empty($configurations_modelobj_array)) {
-            $configurations = array();
-            foreach ($configurations_modelobj_array as $configuration) {
-                $configurations[$configuration -> configuration_key] = $configuration -> configuration_value;
-            }
-        }
-        else {
-            $configurations = null;
-        }
-
-        /* time to build an array with all the initials viws to load */
-        if (!empty($views_modelobj_array)) {
-            $views = array();
-            foreach ($views_modelobj_array as $key => $view_to_load) {
-                $views[$key] = $view_to_load -> view_name;
-            }
-        }
-        else {
-            $views = null;
-        }
-        if (($init_defaults_views == true) && ((!empty($configurations['previous_views'])) || (!empty($configurations['post_views'])))){
-
-            quitar y coger default views?? o dejar asi? cual es mejor sistema?
-            if ($views == null) {
-                $views = array();
-            }
-            if ( !empty($configurations['previous_views'] ) ) {
-                array_unshift($views, $configurations['previous_views']); // añade elemento al principio del array
-            }
-            if ( !empty($configurations['post_views'] ) ) {
-                array_push($views, $configurations['post_views']); // añade elemento al final del array
-            }
+            foreach (self::$AUTOLOADABLE_RESOURCES as $model) {
+                if (empty($this -> {$model.'_autoload'})) {
+                    $this->load->model('controller_autoloaders/'.$model, $model.'_autoload');
+                }
+                $ordenation = self::getOrdenation($model);
+                ${$model.'_defaults_modelobj_array'} = $this -> {$model.'_autoload'} -> getObjectList($filter_defaults,
+                                                                                           null,
+                                                                                           0,
+                                                                                           $ordenation['ordenation'],
+                                                                                           $ordenation['ordenation_type']);
+                if (!empty(${$model.'_modelobj_array'})) {
+                    ${$model.'_modelobj_array'} = array_merge(${$model.'_modelobj_array'}, ${$model.'_defaults_modelobj_array'});
+                }
+                else {
+                    ${$model.'_modelobj_array'} = ${$model.'_defaults_modelobj_array'};
+                }
+           }
         }
 
 
-        if (!empty($links_modelobj_array)) {
-            $links = $links_modelobj_array;
-        }
-        else {
-            $links = null;
+        $result = array();
+        foreach (self::$AUTOLOADABLE_RESOURCES as $resource_model) {
+            $result[$resource_model] = (!empty(${$resource_model.'_modelobj_array'})) ? ${$resource_model.'_modelobj_array'} : null;
         }
 
-        return array ('views' => $views,
-                        'models' => $models,
-                        'translations' => $translations,
-                        'configurations' => $configurations,
-                        'links' => $links);
+        return $result;
 
     }
+
 
     protected function autoload_views($view_array, $data) {
 

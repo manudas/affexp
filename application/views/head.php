@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
+        
         <meta charset="UTF-8">
-        <title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        el<title>
             <?php
                 echo $configurations['title'] . ' - '
                     . (!empty($configurations['sitename']) ? $configurations['sitename'] . ' - ' : '')
@@ -18,7 +21,7 @@
 
                     if (!empty($css_files)) {
                         foreach ($css_files as $css_file) {
-                            $style_string .= file_get_contents($css_file).'\n';
+                            $style_string .= file_get_contents($css_file) . PHP_EOL;
                         }
                     }
                 }
@@ -78,7 +81,7 @@
 
                 if (!empty($script_files)) {
                     foreach ($script_files as $script_file) {
-                        $script_string .= file_get_contents($script_file) . '\n';
+                        $script_string .= file_get_contents($script_file) . PHP_EOL;
                     }
                 }
             }

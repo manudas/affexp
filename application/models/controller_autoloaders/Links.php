@@ -6,7 +6,7 @@
  * Time: 10:28
  */
 
-class Link extends MY_Model {
+class Links extends MY_Model {
 
     public static $definition = array(
         'id' => array (

@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 
    
-        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
 	    
         <link media="all" href="index.css" type="text/css" rel="stylesheet">        
         
         <script src="jquery.min.js"></script>
 
 	    <script src="layout.js"></script>
-
-        <meta charset="UTF-8">
-
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
         
