@@ -173,7 +173,7 @@ CREATE TABLE `views` (
   `active` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `model_name` (`model_name`,`function_name`,`view_name`,`order`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182,7 +182,7 @@ CREATE TABLE `views` (
 
 LOCK TABLES `views` WRITE;
 /*!40000 ALTER TABLE `views` DISABLE KEYS */;
-INSERT INTO `views` VALUES (1,'home','load_home','merchant/merchant_logo_view/merchant_logo_view',0,1),(2,'default','previous','login_bar/login_bar',0,1),(3,'default','previous','header_bar/header_bar',1,1);
+INSERT INTO `views` VALUES (1,'home','load_home','merchant/merchant_logo_view/merchant_logo_view',0,1),(2,'default','previous','login_bar/login_bar',0,1),(3,'default','previous','header_bar/header_bar',1,1),(4,'default','posterior','footer/common_footer/common_footer',0,1);
 /*!40000 ALTER TABLE `views` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -195,4 +195,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-17 15:38:50
+-- Dump completed on 2017-10-18 16:34:51

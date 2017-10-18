@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html class="" lang="en">
-    <head>
 
 
-        <script src="jquery.min.js"></script> 
         <script src="layout.js"></script> 
 
-    </head>
-    <body id="HomePage" class="skyscrapers_on language-en">
-        <div id="Page">
+
             <header class="Header-wrap site-header" itemscope="" itemtype="http://schema.org/Organization">
                 <div class="Header-header">
                     <div>
@@ -217,7 +211,3 @@
                     </div>
                 </nav>
             </header>
-        </div>
-    </body>
-</html>
-

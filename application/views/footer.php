@@ -6,6 +6,5 @@
  * Time: 20:49
  */
 ?>
-    aqui el footer
     </body>
 </html>

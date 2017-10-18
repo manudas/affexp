@@ -116,6 +116,20 @@
 
         <?php
             $script_string = "";
+
+
+            // general scripts to load
+
+            $general_script_files = glob(FCPATH.'assets/scripts/*.js');
+
+            if (!empty($general_script_files)) {
+                foreach ($general_script_files as $script_file) {
+                    $script_string .= file_get_contents($script_file) . PHP_EOL;
+                }
+            }
+
+
+
             foreach ($view_list as $view_name) {
 
                 $view_path = get_view_relative_path($view_name);
