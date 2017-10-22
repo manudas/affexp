@@ -1,0 +1,219 @@
+
+
+#Page {
+    overflow-x: hidden;
+    min-width: 300px;
+    position: relative
+}
+
+
+#Page-main {
+    position: relative;
+    left: 0;
+    float: left;
+    width: 100%;
+    transition: left .25s;
+    padding-bottom: 13px;
+    background-color: #f6f9fb;
+    font-size: 0;
+    line-height: 0
+}
+/*
+#Page-main>.statusMessageWrapper .SuccessMessage,#Page-main>.statusMessageWrapper .ErrorMessage {
+    margin: 5px
+}
+
+body.RedemptionPopupPage #Page-main {
+    background: #f6f9fb;
+    padding: 0
+}
+
+
+
+.skyscrapers_on #Page-main>.statusMessageWrapper {
+    max-width: 1187px;
+    padding: 0 136px;
+    margin: 10px auto 0
+}
+
+@media all and (max-width: 1269px) {
+    .skyscrapers_on #Page-main>.statusMessageWrapper {
+        padding:0;
+        margin: 0;
+        max-width: none
+    }
+}
+*/
+/*
+body.custom-status #Page-main>.statusMessageWrapper .SuccessMessage,body.custom-status #Page-main>.statusMessageWrapper .ErrorMessage {
+    display: none
+}
+*/
+/*
+@media all and (max-width: 767px) {
+    #snow-canvas-mobile {
+        height:60px;
+        background-color: #e71817;
+        display: block
+    }
+
+    .Page-main--promo-bar-on #snow-canvas-mobile {
+        background: transparent;
+        height: 95px
+    }
+
+    .Page-main--promo-bar-on #snow-canvas-mobile-bg {
+        display: block;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 60px;
+        background: #e71817;
+        z-index: 70
+    }
+
+    #snow-canvas-main {
+        display: none
+    }
+
+    .Header-wrap {
+        z-index: 1;
+        position: fixed;
+        width: 260px;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        background: #151515;
+        display: none;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+        max-height: 100%
+    }
+
+    .Header-wrap ul li {
+        float: none;
+        margin: 0 10px;
+        width: auto;
+        border: 0;
+        border-top: 1px solid #353535
+    }
+
+    .Header-pre-header {
+        border: 0
+    }
+
+    .Header-pre-header nav {
+        float: none;
+        margin: 0;
+        border: 0
+    }
+
+    .Header-pre-header .HeaderKeyLinks {
+        display: block
+    }
+
+    .Header-header {
+        display: none
+    }
+
+    .Header-logo {
+        display: none
+    }
+
+    .Header-title {
+        display: block;
+        color: #777;
+        text-transform: uppercase;
+        line-height: 14px;
+        padding: 22px 0 8px;
+        font-size: 11px;
+        border-top: 1px solid #353535;
+        margin: 0 10px
+    }
+
+}
+*/
+
+@media screen and (max-width: 767px) {
+    /*
+    .Page-content {
+        max-width:480px;
+        padding: 10px
+    }
+
+    body.member-area .Page-content {
+        padding: 0
+    }
+*/
+    #Page-main {
+        z-index: 2
+    }
+
+    .Page-mobileheaderopen #Page-main {
+        left: 260px
+    }
+/*
+    .MobileHeader--fixed #Page-main {
+        padding-top: 60px
+    }
+    */
+/*
+    .promo-bar {
+        font-size: 13px
+    }
+
+    .promo-bar--mobile-only {
+        display: block
+    }
+
+    .Header-wrap .promo-bar {
+        display: none
+    }
+    */
+}
+
+
+/*
+@media screen and (max-width: 767px) {
+
+    #member .Page-content {
+        max-width:320px
+    }
+
+    .OuterFrameRed {
+        padding: 10px;
+        color: #000
+    }
+
+    .OuterFrameRed .align-right {
+        text-align: left
+    }
+
+    .member-login #Page-main {
+        background-color: #e62029
+    }
+
+    .member-login .MobileHeader {
+        border-bottom: 3px solid #fff
+    }
+
+    .OuterFrameRed .MobileSecondColumnHidden-1 {
+        width: auto
+    }
+
+    .OuterFrameRed .MobileSecondColumnHidden-1 .InnerFrameRed {
+        margin: 0;
+        padding: 0;
+        background: 0
+    }
+
+    .OuterFrameRed .ErrorMessage {
+        margin: 0 0 20px 0
+    }
+
+    .MobileSecondColumnHidden-1 .InnerFrameRed {
+        padding: 20px 10px
+    }
+}
+
+*/

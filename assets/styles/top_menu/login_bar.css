@@ -566,6 +566,24 @@ a {
 }
 
 @media all and (max-width: 767px) {
+
+
+	.Header-wrap {
+		z-index: 1;
+		position: fixed;
+		width: 260px;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		background: #151515;
+		display: none;
+		overflow-y: scroll;
+		-webkit-overflow-scrolling: touch;
+		max-height: 100%;
+	}
+
+
+	/*
 	.Header-wrap {
 		z-index: 1;
 		position: absolute;
@@ -574,6 +592,10 @@ a {
 		background: rgb(21, 21, 21) none repeat scroll 0% 0%;
 		display: none;
 	}
+
+	*/
+
+/*
 	.Header-wrap ul li {
 		float: none;
 		margin: 0px 10px;
@@ -587,6 +609,19 @@ a {
 		-moz-border-left-colors: none;
 		border-image: none;
 	}
+*/
+
+
+	.Header-wrap ul li {
+		float: none;
+		margin: 0 10px;
+		width: auto;
+		border: 0;
+		border-top: 1px solid #353535
+	}
+
+
+
 	.Header-pre-header {
 		border: 0px none;
 	}
