@@ -1,5 +1,5 @@
 <!-- mobile header -->
-<div class="MobileHeader nav-down">
+<div class="MobileHeader">
     <div class="MobileHeader-bar">
         <a class="MobileHeader-toggle" href="#">
             <p></p>

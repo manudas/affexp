@@ -1,0 +1,111 @@
+
+/*
+@media all and (max-width: 1269px) {
+    .skyscrapers_on .Page-content {
+        padding:10px
+    }
+
+    .skyscrapers_on .Page-content.blogpost-wrapper {
+        padding: 0
+    }
+}
+*/
+/*
+@media screen and (max-width: 767px) {
+    #member .Page-content {
+        max-width:320px
+    }
+
+    .OuterFrameRed {
+        padding: 10px;
+        color: #000
+    }
+
+    .OuterFrameRed .align-right {
+        text-align: left
+    }
+
+    .member-login #Page-main {
+        background-color: #e62029
+    }
+
+    .member-login .MobileHeader {
+        border-bottom: 3px solid #fff
+    }
+
+    .OuterFrameRed .MobileSecondColumnHidden-1 {
+        width: auto
+    }
+
+    .OuterFrameRed .MobileSecondColumnHidden-1 .InnerFrameRed {
+        margin: 0;
+        padding: 0;
+        background: 0
+    }
+
+    .OuterFrameRed .ErrorMessage {
+        margin: 0 0 20px 0
+    }
+
+    .MobileSecondColumnHidden-1 .InnerFrameRed {
+        padding: 20px 10px
+    }
+}
+*/
+/*
+@media all and (max-width: 767px) {
+    .MemberUnsubscribedPage .Columns .child-1,.MemberUnsubscribedPage .Columns .child-2 {
+        float:none;
+        width: 100%;
+        margin: 0
+    }
+
+    .MemberUnsubscribedPage .Columns .child-2 {
+        margin-top: 233px
+    }
+
+    .MemberUnsubscribedPage .OuterFrameRed {
+        border-radius: 0
+    }
+
+    #member.MemberUnsubscribedPage .Page-content {
+        max-width: none;
+        min-width: 320px;
+        padding: 0 0 10px 0
+    }
+
+    .MemberUnsubscribedPage .bubble {
+        padding: 20px 20px;
+        font-size: 16px;
+        margin-top: 10px
+    }
+
+    .MemberUnsubscribedPage .bubble a {
+        font-size: 16px
+    }
+}
+*/
+
+#HomePage .Page-content>div {
+    position: relative
+}
+
+
+/*
+body.RedemptionPopupPage .Page-content {
+    padding: 0;
+    max-width: none
+}
+*/
+
+.Page-content {
+    max-width: 1180px;
+    padding: 10px;
+    margin: auto;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.5;
+    z-index: 1
+}
+
+

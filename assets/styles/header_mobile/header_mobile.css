@@ -20,6 +20,8 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 }
 
 @media all and (max-width: 767px) {
+
+
     .MobileHeader {
         position:relative;
         display: block;
@@ -55,6 +57,41 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
     .MobileHeader--fixed .Page-mobileheaderopen .MobileHeader {
         left: 260px
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #Page-main {
+        z-index: 2
+    }
+
+    .Page-mobileheaderopen #Page-main {
+        left: 260px
+    }
+
+    .MobileHeader--fixed #Page-main {
+        padding-top: 60px
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     .MobileHeader img {
         display: inline-block

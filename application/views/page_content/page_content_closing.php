@@ -1,10 +1,10 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: manu
+ * User: manuel.pulgar
  * Date: 23/10/17
- * Time: 0:19
+ * Time: 14:17
  */
 
 ?>
-<div id="Page" >
+</div>
