@@ -109,3 +109,6 @@ body.RedemptionPopupPage .Page-content {
 }
 
 
+.Page-content>div {
+    position: relative
+}
