@@ -9,9 +9,15 @@ class Publication extends MY_Model {
         'id_product' => array (
             'defaultValue' => null
         ),
+        'external_product_id' => array(
+            'defaultValue' => null
+        ),
+        'price' => array(
+            'defaultValue' => null
+        ),
         'type' => array (
             'type' => 'enum',
-            'values' => array('offer','coupon'),
+            'values' => array('offer','coupon', 'normal_sale', 'other'),
             'defaultValue' => 'offer'
         ),
         'discount_code' => array (

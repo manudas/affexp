@@ -5,3 +5,378 @@
     src: url('{project_url}assets/styles/mvcmoon.eot') format("embedded-opentype"), url('{project_url}assets/styles/mvcmoon.woff') format("woff"), url('{project_url}assets/styles/mvcmoon.ttf') format("truetype");
 }
 
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+    margin: 0px;
+    padding: 0px;
+    border: 0px none;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol, ul {
+    list-style: outside none none;
+}
+
+blockquote::before, blockquote::after, q::before, q::after {
+    content: none;
+}
+
+body {
+    margin-top: 0px ! important;
+    padding-top: 0px ! important;
+}
+
+.icon-cat-d, .icon-cat-c, .icon-cat-b, .icon-cat-a, .icon-trolly, .icon-menu, .icon-wally, .icon-search, .icon-tags, .icon-star, .icon-people, .icon-padlock, .icon-medal, .icon-logout, .icon-login, .icon-heart, .icon-envelope, .icon-circle-arrow-up, .icon-circle-arrow-right, .icon-circle-arrow-left, .icon-circle-arrow-down, .icon-box, .icon-arrow-up, .icon-arrow-right, .icon-arrow-left, .icon-arrow-down, .icon-cat-v, .icon-cat-u, .icon-cat-t, .icon-cat-s, .icon-cat-r, .icon-cat-q, .icon-cat-p, .icon-cat-n, .icon-cat-m, .icon-cat-l, .icon-cat-k, .icon-cat-j, .icon-cat-i, .icon-cat-h, .icon-cat-g, .icon-cat-f, .icon-social-facebook, .icon-thumbsup, .icon-social-twitter, .icon-social-pinterest, .icon-social-gplus, .icon-cat-o, .icon-alarm-clock, .icon-tick, .icon-cat-w, .icon-cat-e, .icon-user, .icon-outlined-favorite, .icon-favorite, .icon-love, .icon-outlined-heart, .icon-old-alarm, .icon-alarm, .icon-money, .icon-award, .icon-cat-x, .icon-cat-y, .icon-cat-z, .icon-cat-0, .icon-cat-1, .icon-cat-2, .icon-cat-3, .icon-cat-4, .icon-cat-5, .icon-cat-6, .icon-cat-7, .icon-cat-8, .icon-cat-9, .icon-instagram, .icon-youtube3, .icon-vimeo, .icon-share-alt {
+    font-family: "mvcmoon";
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+}
+
+.icon-cat-d::before {
+    content: "d";
+}
+
+.icon-cat-c::before {
+    content: "c";
+}
+
+.icon-cat-b::before {
+    content: "b";
+}
+
+.icon-cat-a::before {
+    content: "a";
+}
+
+.icon-trolly::before {
+    content: "C";
+}
+
+.icon-menu::before {
+    content: "≡";
+}
+
+.icon-wally::before {
+    content: "W";
+}
+
+.icon-search::before {
+    content: "S";
+}
+
+.icon-tags::before {
+    content: "#";
+}
+
+.icon-star::before {
+    content: "★";
+}
+
+.icon-people::before {
+    content: "$";
+}
+
+.icon-padlock::before {
+    content: "%";
+}
+
+.icon-medal::before {
+    content: "*";
+}
+
+.icon-logout::before {
+    content: "]";
+}
+
+.icon-login::before {
+    content: "[";
+}
+
+.icon-heart::before {
+    content: "❤";
+}
+
+.icon-envelope::before {
+    content: "✉";
+}
+
+.icon-circle-arrow-up::before {
+    content: "⇑";
+}
+
+.icon-circle-arrow-right::before {
+    content: "⇒";
+}
+
+.icon-circle-arrow-left::before {
+    content: "⇐";
+}
+
+.icon-circle-arrow-down::before {
+    content: "⇓";
+}
+
+.icon-box::before {
+    content: "■";
+}
+
+.icon-arrow-up::before {
+    content: "↑";
+}
+
+.icon-arrow-right::before {
+    content: "→";
+}
+
+.icon-arrow-left::before {
+    content: "←";
+}
+
+.icon-arrow-down::before {
+    content: "↓";
+}
+
+.icon-cat-v::before {
+    content: "v";
+}
+
+.icon-cat-u::before {
+    content: "u";
+}
+
+.icon-cat-t::before {
+    content: "t";
+}
+
+.icon-cat-s::before {
+    content: "s";
+}
+
+.icon-cat-r::before {
+    content: "r";
+}
+
+.icon-cat-q::before {
+    content: "q";
+}
+
+.icon-cat-p::before {
+    content: "p";
+}
+
+.icon-cat-n::before {
+    content: "n";
+}
+
+.icon-cat-m::before {
+    content: "m";
+}
+
+.icon-cat-l::before {
+    content: "l";
+}
+
+.icon-cat-k::before {
+    content: "k";
+}
+
+.icon-cat-j::before {
+    content: "j";
+}
+
+.icon-cat-i::before {
+    content: "i";
+}
+
+.icon-cat-h::before {
+    content: "h";
+}
+
+.icon-cat-g::before {
+    content: "g";
+}
+
+.icon-cat-f::before {
+    content: "f";
+}
+
+.icon-social-facebook::before {
+    content: "F";
+}
+
+.icon-thumbsup::before {
+    content: "!";
+}
+
+.icon-social-twitter::before {
+    content: "T";
+}
+
+.icon-social-pinterest::before {
+    content: "P";
+}
+
+.icon-social-gplus::before {
+    content: "G";
+}
+
+.icon-cat-o::before {
+    content: "o";
+}
+
+.icon-alarm-clock::before {
+    content: "⏰";
+}
+
+.icon-tick::before {
+    content: "✓";
+}
+
+.icon-cat-w::before {
+    content: "w";
+}
+
+.icon-cat-e::before {
+    content: "e";
+}
+
+.icon-user::before {
+    content: "B";
+}
+
+.icon-outlined-favorite::before {
+    content: "D";
+}
+
+.icon-favorite::before {
+    content: "E";
+}
+
+.icon-love::before {
+    content: "H";
+}
+
+.icon-outlined-heart::before {
+    content: "I";
+}
+
+.icon-old-alarm::before {
+    content: "L";
+}
+
+.icon-alarm::before {
+    content: "O";
+}
+
+.icon-money::before {
+    content: "M";
+}
+
+.icon-award::before {
+    content: "R";
+}
+
+.icon-cat-x::before {
+    content: "x";
+}
+
+.icon-cat-y::before {
+    content: "y";
+}
+
+.icon-cat-z::before {
+    content: "z";
+}
+
+.icon-cat-0::before {
+    content: "0";
+}
+
+.icon-cat-1::before {
+    content: "1";
+}
+
+.icon-cat-2::before {
+    content: "2";
+}
+
+.icon-cat-3::before {
+    content: "3";
+}
+
+.icon-cat-4::before {
+    content: "4";
+}
+
+.icon-cat-5::before {
+    content: "5";
+}
+
+.icon-cat-6::before {
+    content: "6";
+}
+
+.icon-cat-7::before {
+    content: "7";
+}
+
+.icon-cat-8::before {
+    content: "8";
+}
+
+.icon-cat-9::before {
+    content: "9";
+}
+
+.icon-instagram::before {
+    content: "U";
+}
+
+.icon-youtube3::before {
+    content: "Y";
+}
+
+.icon-vimeo::before {
+    content: "V";
+}
+
+.icon-share-alt::before {
+    content: "~";
+}
+
+.icon-chevron::before {
+    border-style: solid;
+    border-width: 0.1em 0.1em 0px 0px;
+    content: "";
+    display: inline-block;
+    height: 0.6em;
+    left: 0.15em;
+    position: relative;
+    top: 0.15em;
+    transform: rotate(-45deg);
+    vertical-align: top;
+    width: 0.6em;
+}
+
+.icon-chevron-right::before {
+    left: 0px;
+    transform: rotate(45deg);
+}
+
+.icon-chevron-left::before {
+    left: 0.325em;
+    transform: rotate(-135deg);
+}
+

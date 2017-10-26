@@ -9,6 +9,7 @@ class Product extends MY_Model {
         'id_merchant' => array (
             'defaultValue' => null
         ),
+
         'active' => array (
             'defaultValue' => false
         )

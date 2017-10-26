@@ -13,7 +13,7 @@ class Merchant extends MY_Model {
         'name' => array (
             'defaultValue' => null
         ),
-        'img' => array (
+        'img_group_description' => array (
             'defaultValue' => null
         ),
         'url' => array (
