@@ -32,5 +32,4 @@ class Image extends MY_Model {
             'foreign_join_attribute' => 'id',
             'join_operation' => '=')
     );
-
 }
