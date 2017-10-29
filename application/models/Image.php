@@ -18,6 +18,9 @@ class Image extends MY_Model {
         'uri' => array(
             'defaultValue' => null
         ),
+        'description' => array (
+            'defaultValue' => null
+        ),
         'order' => array (
             'defaultValue' => 0
         ),

@@ -13,7 +13,7 @@ class Merchant extends MY_Model {
         'name' => array (
             'defaultValue' => null
         ),
-        'img_group_description' => array (
+        'img_id_group' => array (
             'defaultValue' => null
         ),
         'url' => array (
@@ -33,8 +33,20 @@ class Merchant extends MY_Model {
                'foreign_join_attribute' => 'id_merchant',
                'join_operation' => '='),
         array('join_with' => 'Category',
-            'own_join_attribute' => 'id_category',
-            'foreign_join_attribute' => 'id',
-            'join_operation' => '=')
+                'own_join_attribute' => 'id_category',
+                'foreign_join_attribute' => 'id',
+                'join_operation' => '='),
+        array('join_with' => 'ImageGroup',
+                'own_join_attribute' => 'img_id_group',
+                'foreign_join_attribute' => 'id_associated_object',
+                'join_operation' => '=',
+                /*
+                'AND' => array(
+                    'own_join_attribute' => '"merchant"',
+                    'foreign_join_attribute' => 'type',
+                    'join_operation' => '=',
+                )
+                */
+                )
     );
 }

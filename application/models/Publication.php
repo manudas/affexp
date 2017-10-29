@@ -15,6 +15,9 @@ class Publication extends MY_Model {
         'price' => array(
             'defaultValue' => null
         ),
+        'img_id_group' => array(
+            'defaultValue' => null
+        ),
         'type' => array (
             'type' => 'enum',
             'values' => array('offer','coupon', 'normal_sale', 'other'),
@@ -50,7 +53,16 @@ class Publication extends MY_Model {
         array('join_with' => 'Program', 
                'own_join_attribute' => 'id_program',
                'foreign_join_attribute' => 'id',
-               'join_operation' => '=')
+               'join_operation' => '='),
+        array('join_with' => 'ImageGroup',
+            'own_join_attribute' => 'img_id_group',
+            'foreign_join_attribute' => 'id_associated_object',
+            'join_operation' => '=',
+            'AND' => array(
+                'own_join_attribute' => '"publication"',
+                'foreign_join_attribute' => 'type',
+                'join_operation' => '=',
+            ))
     ); 
 
 }
