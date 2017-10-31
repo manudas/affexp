@@ -181,10 +181,19 @@ class MY_Model extends CI_Model
         return $query_result;
     }
 
-    public static function getObjectList($filter = null, $limit = null, $offset = 0, $order_by = null, $ordenation = 'ASC', $table = null)
+
+
+    /**
+     * @param $ordenation: array of quaternions (in this case pairs) in the following format:
+     * 'ordenation_column' => column,
+     * 'column_table' => name_of_the_table_whose_column_belongs_to
+     * 'order_in_join_list' => number of the aparition in the join list. default = 1
+     * 'ordenation_type => 'ASC' or 'DESC'
+     */
+    public static function getObjectList($filter = null, $limit = null, $offset = 0, $ordenation = null, $table = null)
     {
         $object_list = array();
-        $results = self::getList($filter, $limit, $offset, $order_by, $ordenation, $table);
+        $results = self::getList($filter, $limit, $offset, $ordenation, $table);
         foreach ($results as $result) {
             $current_class = static::class;
             $object_list[] = new $current_class($result);
@@ -192,8 +201,11 @@ class MY_Model extends CI_Model
         return $object_list;
     }
 
-    private function makeJoins($join_clausules, $join_type)
+    private static function makeJoins($join_clausules, $join_type = null)
     {
+
+        $instance = &get_instance();
+
         if (!empty($join_clausules)) {
             for ($i = 0; $i < count($join_clausules); $i++) {
                 /*
@@ -204,9 +216,9 @@ class MY_Model extends CI_Model
                                             'join_operation' => $current_joinable['join_operation']);
                 */
                 $join_clausule = $join_clausules[$i];
-                $inner_AND_OR_JOIN = $this->getInnerAndORJoin($join_clausule);
+                $inner_AND_OR_JOIN = self::getInnerAndORJoin($join_clausule);
                 if (!empty($join_type)) {
-                    $this->db->join($join_clausule['aliased_foreign_table'],
+                    $instance->db->join($join_clausule['aliased_foreign_table'],
                         $join_clausule['aliased_own_join_attribute'] .
                         ' ' .
                         $join_clausule['join_operation'] .
@@ -216,7 +228,7 @@ class MY_Model extends CI_Model
                         $join_clausule['join_type']
                     );
                 } else {
-                    $this->db->join($join_clausule['aliased_foreign_table'],
+                    $instance->db->join($join_clausule['aliased_foreign_table'],
                         $join_clausule['aliased_own_join_attribute'] .
                         ' ' .
                         $join_clausule['join_operation'] .
@@ -272,7 +284,7 @@ class MY_Model extends CI_Model
         return $result;
     }
 
-    private function getInnerAndORJoin($main_join_clausule, $subjoin_clausule)
+    private static function getInnerAndORJoin($main_join_clausule)
     {
 
         /*
@@ -282,18 +294,19 @@ class MY_Model extends CI_Model
                 'aliased_foreign_join_attribute' => $aliased_foreign_join_attribute,
                 'join_operation' => $join_operation,
          */
-        if (!empty($subjoin_clausule)) {
+        //if (!empty($subjoin_clausule)) {
             $result = '';
 
-            $and = static::getAndArray($main_join_clausule, $subjoin_clausule);
-            $or = static::getOrArray($main_join_clausule, $subjoin_clausule);
+            $and = static::getAndArray($main_join_clausule);
+            $or = static::getOrArray($main_join_clausule);
 
             if (!empty($and)) {
                 $result .= ' AND ( ' .
                     $and['aliased_own_join_attribute'] .
                     $and['join_operation'] .
                     $and['aliased_foreign_join_attribute']
-                    . ' )';
+                    . self::getInnerAndORJoin($and)
+                    .' )';
             }
 
             if (!empty($or)) {
@@ -301,13 +314,15 @@ class MY_Model extends CI_Model
                     $or['aliased_own_join_attribute'] .
                     $or['join_operation'] .
                     $or['aliased_foreign_join_attribute']
+                    . self::getInnerAndORJoin($or)
                     . ' )';
             }
-            return $result . $this->getInnerAndORJoin();
+            return $result /*. self::getInnerAndORJoin()*/;
+        /*
         } else {
             return '';
         }
-
+    */
     }
 
     /**
@@ -325,7 +340,7 @@ class MY_Model extends CI_Model
             // getAlias($join_with, $join_clausules_list, $ocurrence)
 
             foreach ($ordenation_list as $ordenation) {
-                $alias = $this -> getAlias($ordenation['column_table'], $join_clausules, $ordenation['order_in_join_list']);
+                $alias = self::getAlias($ordenation['column_table'], $join_clausules, $ordenation['order_in_join_list']);
                 /*
                     $single_order_by = $aliased_ordenation[$i]['aliased_colum'];
                     $current_ordenation = $aliased_ordenation[$i]['ordenation'];
@@ -369,34 +384,34 @@ class MY_Model extends CI_Model
      * 'order_in_join_list' => number of the aparition in the join list. default = 1
      * 'ordenation_type => 'ASC' or 'DESC'
      */
-    public function getAllJoinedData($list_of_joined_classes, $limit = null, $offset = 0,
+    public static function getAllJoinedData($list_of_joined_classes, $limit = null, $offset = 0,
                                      $ordenation,
                                      $conditions = null)
     {
-
+        $instance = &get_instance();
 
         $join_clausules = static::getJoinClausules($list_of_joined_classes);
 
 
-        $sql_where = $this->getWhereSQL($conditions, $join_clausules);
-        $aliased_ordenation = $this->getAliasedOrdenation($ordenation, $join_clausules);
+        $sql_where = self::getWhereSQL($conditions, $join_clausules);
+        $aliased_ordenation = self::getAliasedOrdenation($ordenation, $join_clausules);
 
-        $this->db->select('*');
-        $this->db->where('a0.id = ' . $this->id . $sql_where);
-        $this->db->limit($limit, $offset);
-        $this->db->from(self::getModelTable() . ' as a0');
+        $instance->db->select('*');
+        $instance->db->where(/*'a0.id = ' . $this->id .*/ $sql_where);
+        $instance->db->limit($limit, $offset);
+        $instance->db->from(self::getModelTable() . ' as a0');
 
         for ($i = 0; $i < count($aliased_ordenation); $i++){
 
             $single_order_by = $aliased_ordenation[$i]['aliased_column'];
             $current_ordenation = $aliased_ordenation[$i]['ordenation'];
 
-            $this->db->order_by($single_order_by, $current_ordenation);
+            $instance->db->order_by($single_order_by, $current_ordenation);
         }
 
-        $this->makeJoins($join_clausules);
+        self::makeJoins($join_clausules);
 
-        return $this->db->get()->result_array();
+        return $instance->db->get()->result_array();
     }
 
 
@@ -430,67 +445,73 @@ class MY_Model extends CI_Model
 
         $join_clausule_list = array();
 
-        $current_joinable_set = self::$joinable;
+        $current_joinable_set = static::$joinable;
 
-        $array_iterator = new RecursiveArrayIterator($list_of_joined_classes);
-        //$tree_iterator = new RecursiveTreeIterator($array_iterator);
+        if (!empty($list_of_joined_classes)) {
+            $array_iterator = new RecursiveArrayIterator($list_of_joined_classes);
+            //$tree_iterator = new RecursiveTreeIterator($array_iterator);
 
-        foreach ($array_iterator as $class_to_join => $joined_attributes) {
-            $is_joinable = false;
-            foreach ($current_joinable_set as $current_joinable) {
-                if (strtolower($current_joinable['join_with']) == strtolower($class_to_join)) {
-                    $is_joinable = true;
-                    break;
-                }
-            }
-
-            if (!$is_joinable) {
-                $error_string = 'The class ' . get_class() . ' is not joinable with ' . $class_to_join;
-                log_message('error', $error_string);
-                show_error($error_string, 500); // returns error 500
-                throw RuntimeException($error_string);
-            } else {
-
-                $own_alias = 'a' . ($current_alias);
-                $foreign_alias = 'a' . ($current_alias + 1);
-
-                $operation = $current_joinable['join_operation'];
-                $own_table = self::getModelTable() . ' as ' . $own_alias;
-                $foreign_table = $class_to_join::getModelTable() . ' as ' . $foreign_alias;
-
-                $current_joining_data = array('aliased_own_table' => $own_table,
-                    'own_alias' => $own_alias,
-                    'own_table' => self::getModelTable(),
-                    'aliased_foreign_table' => $foreign_table,
-                    'foreign_alias' => $foreign_alias,
-                    'foreign_table' => $class_to_join::getModelTable(),
-                    'aliased_own_join_attribute' => $own_alias . '.' . $current_joinable['own_join_attribute'],
-                    'aliased_foreign_join_attribute' => $foreign_alias . '.' . $current_joinable['foreign_join_attribute'],
-                    'join_operation' => $operation,
-                    'join_type' => $class_to_join['join_type']);
-
-
-                if (!empty($joined_attributes)) {
-                    $current_joining_data['join_type'] = $joined_attributes['join_type'];
+            foreach ($array_iterator as $class_to_join => $joined_attributes) {
+                $is_joinable = false;
+                foreach ($current_joinable_set as $current_joinable) {
+                    if (strtolower($current_joinable['join_with']) == strtolower($class_to_join)) {
+                        $is_joinable = true;
+                        break;
+                    }
                 }
 
-                $and = static::getAndJoinedData($current_joinable);
-                $or = static::getOrJoinedData($current_joinable);
+                if (!$is_joinable) {
+                    $error_string = 'The class ' . (static::class) . ' is not joinable with ' . $class_to_join;
+                    log_message('error', $error_string);
+                    show_error($error_string, 500); // returns error 500
+                    throw RuntimeException($error_string);
+                } else {
 
-                $current_joining_data['and'] = $and;
-                $current_joining_data['or'] = $or;
+                    $own_alias = 'a' . ($current_alias);
+                    $foreign_alias = 'a' . ($current_alias + 1);
 
-                $join_clausule_list[] = $current_joining_data;
+                    $operation = $current_joinable['join_operation'];
+                    $own_table = self::getModelTable() . ' as ' . $own_alias;
+                    $foreign_table = $class_to_join::getModelTable() . ' as ' . $foreign_alias;
+
+                    $current_joining_data = array('aliased_own_table' => $own_table,
+                        'own_alias' => $own_alias,
+                        'own_table' => self::getModelTable(),
+                        'aliased_foreign_table' => $foreign_table,
+                        'foreign_alias' => $foreign_alias,
+                        'foreign_table' => $class_to_join::getModelTable(),
+                        'aliased_own_join_attribute' => $own_alias . '.' . $current_joinable['own_join_attribute'],
+                        'aliased_foreign_join_attribute' => $foreign_alias . '.' . $current_joinable['foreign_join_attribute'],
+                        'join_operation' => $operation,
+                        'join_type' => $class_to_join['join_type']);
 
 
-                if (!empty($joined_attributes)) {
+                    if (!empty($joined_attributes)) {
+                        $current_joining_data['join_type'] = $joined_attributes['join_type'];
+                    }
 
-                    $inner_join_clausules = $class_to_join::getAllJoinedData($joined_attributes['sub_list'], $current_alias + 1, strtolower($class_to_join));
-                    $join_clausule_list = array_merge($join_clausule_list, $inner_join_clausules);
-                    $current_alias += count($inner_join_clausules);
+                    $and = static::getAndJoinedData($current_joinable, $current_alias);
+                    $or = static::getOrJoinedData($current_joinable, $current_alias);
+
+                    $current_joining_data['and'] = $and;
+                    $current_joining_data['or'] = $or;
+
+                    $join_clausule_list[] = $current_joining_data;
+
+
+                    if (!empty($joined_attributes)) {
+                        /*
+                                                public function getAllJoinedData($list_of_joined_classes, $limit = null, $offset = 0,
+                                                             $ordenation,
+                                                             $conditions = null)
+                         */
+                        $inner_join_clausules = $class_to_join::getJoinClausules($joined_attributes['sub_list'], $current_alias + 1/* , strtolower($class_to_join)*/);
+                        $join_clausule_list = array_merge($join_clausule_list, $inner_join_clausules);
+                        $current_alias += count($inner_join_clausules);
+                    }
+
+                    $current_alias++;
                 }
-
-                $current_alias++;
             }
         }
         return $join_clausule_list;
@@ -546,7 +567,7 @@ class MY_Model extends CI_Model
 
     }
 
-    private function getAlias($join_with, $join_clausules_list, $ocurrence = 1)
+    private static function getAlias($join_with, $join_clausules_list, $ocurrence = 1)
     {
         $current_ocurrence = 0;
         $alias = '';
@@ -593,7 +614,7 @@ class MY_Model extends CI_Model
         }
     }
 
-    private function getWhereSQL($condition_list, $join_clausules)
+    private static function getWhereSQL($condition_list, $join_clausules)
     {
 
         $conditions_arr_list = static::setDefaultCondtionsVars($condition_list);
@@ -608,10 +629,10 @@ class MY_Model extends CI_Model
                 // condition_tables could be empty if the condition was made with a literal
                 $where = true;
                 if (!empty($condition_table1)) {
-                    $where_alias1 = $this->getAlias($condition_table1, $join_clausules, $ocurrence_condition_1);
+                    $where_alias1 = self::getAlias($condition_table1, $join_clausules, $ocurrence_condition_1);
                 }
                 if (!empty($condition_table2)) {
-                    $where_alias2 = $this->getAlias($condition_table2, $join_clausules, $ocurrence_condition_2);
+                    $where_alias2 = self::getAlias($condition_table2, $join_clausules, $ocurrence_condition_2);
                 }
             } else {
                 $where = false;
@@ -673,15 +694,15 @@ class MY_Model extends CI_Model
         $join_clausules = self::getJoinClausules($list_of_joined_classes);
 
 
-        $main_alias = $this->getAlias($join_with, $join_clausules, $ocurrence);
+        $main_alias = self::getAlias($join_with, $join_clausules, $ocurrence);
 
-        $sql_where = $this->getWhereSQL($conditions, $join_clausules);
+        $sql_where = self::getWhereSQL($conditions, $join_clausules);
 
-        $aliased_ordenation = $this->getAliasedOrdenation($ordenation, $join_clausules);
+        $aliased_ordenation = self::getAliasedOrdenation($ordenation, $join_clausules);
 
         if (!empty($alias)) {
             $this->db->select($main_alias . '.*');
-            $this->db->where('a0.id = ' . $this->id . $sql_where);
+            $this->db->where(/*'a0.id = ' . $this->id .*/ $sql_where);
             $this->db->limit($limit, $offset);
             $this->db->from(self::getModelTable() . ' as a0');
             // $this->db->order_by($order_by, $ordenation);
@@ -694,7 +715,7 @@ class MY_Model extends CI_Model
                 $this->db->order_by($single_order_by, $current_ordenation);
             }
 
-            $this->makeJoins($join_clausules);
+            self::makeJoins($join_clausules);
 
             return $this->db->get()->result_array();
         } else {

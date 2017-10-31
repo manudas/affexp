@@ -29,7 +29,18 @@ class MY_Controller extends CI_Controller {
             'views' => 'build_views_array'
         );
 
-    public static function getOrdenation($autoloadable_resource_model) {
+    public static function getOrdenationForAutoloadableResource($autoloadable_resource_model) {
+
+        /**
+         * How ordenation is passed to other functions
+         * @param $ordenation: array of quaternions (in this case pairs) in the following format:
+         * 'ordenation_column' => column,
+         * 'column_table' => name_of_the_table_whose_column_belongs_to
+         * 'order_in_join_list' => number of the aparition in the join list. default = 1
+         * 'ordenation_type => 'ASC' or 'DESC'
+         */
+
+
         if (($autoloadable_resource_model == 'views') || ($autoloadable_resource_model == 'links')) {
             $ordenation = 'order';
             $ordenation_type = 'ASC';
@@ -38,7 +49,10 @@ class MY_Controller extends CI_Controller {
             $ordenation = null;
             $ordenation_type = null;
         }
-        return array ('ordenation' => $ordenation, 'ordenation_type' => $ordenation_type);
+
+        // being used for autoloadable only (that for now uses the method getList which doesn't use
+        // any class join, we only need ordenation_column and ordenation_type
+        return array ('ordenation_column' => $ordenation, 'ordenation_type' => $ordenation_type);
     }
 
 	protected function genericViewLoader ($view_list, $data = array(), $add_header = true, $add_footer = true, $return_view = false) {
@@ -255,12 +269,11 @@ class MY_Controller extends CI_Controller {
 
         foreach ($autoload_models as $model) {
             $this->load->model('controller_autoloaders/'.$model, $model.'_autoload');
-            $ordenation = self::getOrdenation($model);
+            $ordenation = self::getOrdenationForAutoloadableResource($model);
             ${$model.'_modelobj_array'} = $this -> {$model.'_autoload'} -> getObjectList($filter,
                                                                                             null,
                                                                                             0,
-                                                                                            $ordenation['ordenation'],
-                                                                                            $ordenation['ordenation_type']);
+                                                                                            $ordenation);
         }
 
         if ($init_defaults_views == true) {
@@ -271,12 +284,11 @@ class MY_Controller extends CI_Controller {
                 if (empty($this -> {$model.'_autoload'})) {
                     $this->load->model('controller_autoloaders/'.$model, $model.'_autoload');
                 }
-                $ordenation = self::getOrdenation($model);
+                $ordenation = self::getOrdenationForAutoloadableResource($model);
                 ${$model.'_defaults_modelobj_array'} = $this -> {$model.'_autoload'} -> getObjectList($filter_defaults,
                                                                                            null,
                                                                                            0,
-                                                                                           $ordenation['ordenation'],
-                                                                                           $ordenation['ordenation_type']);
+                                                                                           $ordenation);
                 if (!empty(${$model.'_modelobj_array'})) {
                     ${$model.'_modelobj_array'} = array_merge(${$model.'_modelobj_array'}, ${$model.'_defaults_modelobj_array'});
                 }
