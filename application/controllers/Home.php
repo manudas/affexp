@@ -102,11 +102,13 @@ class Home extends MY_Controller
          * 'ordenation_type => 'ASC' or 'DESC'
          *
          */
-        $ordenation = array(
-            'ordenation_column' => 'name',
-            'orednation_type' => 'ASC',
-            'column_table' => 'merchant',
-            'order_in_join_list' => 1
+        $ordenation = array( // stacked ordenations are possible, they have to be ordered in this array
+            array(
+                'ordenation_column' => 'name',
+                'ordenation_type' => 'ASC',
+                'column_table' => 'merchant',
+                'order_in_join_list' => 1
+            )
         );
 
         /*

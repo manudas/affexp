@@ -334,7 +334,7 @@ class MY_Model extends CI_Model
      * 'order_in_join_list' => number of the aparition in the join list. default = 1
      * 'ordenation_type => 'ASC' or 'DESC'
      */
-    private function getAliasedOrdenation($ordenation_list, $join_clausules) {
+    private static function getAliasedOrdenation($ordenation_list, $join_clausules) {
         $result = array ();
         if (!empty($ordenation_list)) {
             // getAlias($join_with, $join_clausules_list, $ocurrence)
@@ -483,7 +483,7 @@ class MY_Model extends CI_Model
                         'aliased_own_join_attribute' => $own_alias . '.' . $current_joinable['own_join_attribute'],
                         'aliased_foreign_join_attribute' => $foreign_alias . '.' . $current_joinable['foreign_join_attribute'],
                         'join_operation' => $operation,
-                        'join_type' => $class_to_join['join_type']);
+                        'join_type' => null);
 
 
                     if (!empty($joined_attributes)) {
@@ -499,7 +499,7 @@ class MY_Model extends CI_Model
                     $join_clausule_list[] = $current_joining_data;
 
 
-                    if (!empty($joined_attributes)) {
+                    if (!empty($joined_attributes['sub_list'])) {
                         /*
                                                 public function getAllJoinedData($list_of_joined_classes, $limit = null, $offset = 0,
                                                              $ordenation,
@@ -572,8 +572,17 @@ class MY_Model extends CI_Model
         $current_ocurrence = 0;
         $alias = '';
         if (!empty($join_clausules_list)) {
-            foreach ($join_clausules_list as $join_clausule) {
+            for ($i = 0; $i < count ($join_clausules_list); $i++){
+            // foreach ($join_clausules_list as $join_clausule) {
+                $join_clausule = $join_clausules_list[$i];
                 if (strtolower($join_clausule['own_table']) == strtolower($join_with)) {
+                    $current_ocurrence++;
+                    if ($current_ocurrence == $ocurrence) {
+                        $alias = $join_clausule['own_alias'];
+                        break;
+                    }
+                }
+                else if (strtolower($join_clausule['foreign_table']) == strtolower($join_with)) {
                     $current_ocurrence++;
                     if ($current_ocurrence == $ocurrence) {
                         $alias = $join_clausule['foreign_alias'];
@@ -617,37 +626,42 @@ class MY_Model extends CI_Model
     private static function getWhereSQL($condition_list, $join_clausules)
     {
 
-        $conditions_arr_list = static::setDefaultCondtionsVars($condition_list);
-        // from here we extract operation_condition, condition1 and 2, ocurrence conditions and tables
+        if (!empty($condition_list)) {
 
-        foreach ($conditions_arr_list as $conditions_arr) {
-            extract($conditions_arr);
+            $sql_where = 'true';
 
-            $sql_where = '';
+            $conditions_arr_list = static::setDefaultCondtionsVars($condition_list);
+            // from here we extract operation_condition, condition1 and 2, ocurrence conditions and tables
 
-            if (!empty($condition_1) && !empty($operation_condition) && !empty($condition_2)) {
-                // condition_tables could be empty if the condition was made with a literal
-                $where = true;
-                if (!empty($condition_table1)) {
-                    $where_alias1 = self::getAlias($condition_table1, $join_clausules, $ocurrence_condition_1);
+            foreach ($conditions_arr_list as $conditions_arr) {
+                extract($conditions_arr);
+
+                if (!empty($condition_1) && !empty($operation_condition) && !empty($condition_2)) {
+                    // condition_tables could be empty if the condition was made with a literal
+                    $where = true;
+                    if (!empty($condition_table1)) {
+                        $where_alias1 = self::getAlias($condition_table1, $join_clausules, $ocurrence_condition_1);
+                    }
+                    if (!empty($condition_table2)) {
+                        $where_alias2 = self::getAlias($condition_table2, $join_clausules, $ocurrence_condition_2);
+                    }
+                } else {
+                    $where = false;
                 }
-                if (!empty($condition_table2)) {
-                    $where_alias2 = self::getAlias($condition_table2, $join_clausules, $ocurrence_condition_2);
+
+
+                if ($where == true) {
+                    $sql_where .= ' AND ' . (!empty ($where_alias1) ? $where_alias1 . '.' : '') . $condition_1 . ' '
+                        . $operation_condition . ' '
+                        . (!empty($where_alias2) ? $where_alias2 . '.' : '') . $condition_2;
+                } else {
+                    // $sql_where .= ''; no need to concat anything
                 }
-            } else {
-                $where = false;
-            }
-
-
-            if ($where == true) {
-                $sql_where .= ' AND ' . (!empty ($where_alias1) ? $where_alias1 . '.' : '') . $condition_1 . ' '
-                    . $operation_condition . ' '
-                    . (!empty($where_alias2) ? $where_alias2 . '.' : '') . $condition_2;
-            } else {
-                // $sql_where .= ''; no need to concat anything
             }
         }
-
+        else {
+            $sql_where = '';
+        }
         return $sql_where;
     }
 
