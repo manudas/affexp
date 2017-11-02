@@ -56,7 +56,7 @@ class Publication extends MY_Model {
                'join_operation' => '='),
         array('join_with' => 'ImageGroup',
             'own_join_attribute' => 'img_id_group',
-            'foreign_join_attribute' => 'id_associated_object',
+            'foreign_join_attribute' => 'id',
             'join_operation' => '=',
             'AND' => array(
                 'own_join_attribute' => '"publication"',

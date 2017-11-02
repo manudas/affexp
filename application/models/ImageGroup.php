@@ -35,16 +35,16 @@ class ImageGroup extends MY_Model {
             'foreign_join_attribute' => 'id_image_group',
             'join_operation' => '='),
         array('join_with' => 'Merchant',
-            'own_join_attribute' => 'id_associated_object',
-            'foreign_join_attribute' => 'id',
+            'own_join_attribute' => 'id',
+            'foreign_join_attribute' => 'img_id_group',
             'join_operation' => '='),
         array('join_with' => 'Publication',
-            'own_join_attribute' => 'id_associated_object',
-            'foreign_join_attribute' => 'id',
+            'own_join_attribute' => 'id',
+            'foreign_join_attribute' => 'img_id_group',
             'join_operation' => '='),
         array('join_with' => 'Category',
-            'own_join_attribute' => 'id_associated_object',
-            'foreign_join_attribute' => 'id',
+            'own_join_attribute' => 'id',
+            'foreign_join_attribute' => 'img_id_group',
             'join_operation' => '=')
     );
 

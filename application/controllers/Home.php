@@ -119,11 +119,12 @@ class Home extends MY_Controller
         */
         $merchant_data_list = Merchant::getAllJoinedData($join_list, 20, 0, $ordenation, $conditions);
 
-
+/*
         foreach ($merchant_data_list as &$merchant_data) {
             $merchant_data['imgalt'] = $offer_alt_img_text . ' ' . $merchant_data['name'];
             $merchant_data['imgtitle'] = $offer_title_img_text . ' ' . $merchant_data['name'];
         }
+*/
 
         /* Collecting all the data all the views need in a $data array */
         $data = array('merchant_list' => $merchant_data_list, 'configurations' => $preprocessed_data['configurations']);

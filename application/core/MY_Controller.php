@@ -42,17 +42,26 @@ class MY_Controller extends CI_Controller {
 
 
         if (($autoloadable_resource_model == 'views') || ($autoloadable_resource_model == 'links')) {
+
+            // being used for autoloadable only (that for now uses the method getList which doesn't use
+            // any class join, we only need ordenation_column and ordenation_type
+
             $ordenation = 'order';
             $ordenation_type = 'ASC';
+            $result =
+                        array ( // ORDENATION COULD BE DONE BY MORE THAT ONE COLUMN, SO WE NEED A MULTIDIMENSIONAL ARRAY
+                            array('ordenation_column' => $ordenation,
+                                        'ordenation_type' => $ordenation_type)
+                        );
         }
         else {
+            /*
             $ordenation = null;
             $ordenation_type = null;
+            */
+            $result = null;
         }
-
-        // being used for autoloadable only (that for now uses the method getList which doesn't use
-        // any class join, we only need ordenation_column and ordenation_type
-        return array ('ordenation_column' => $ordenation, 'ordenation_type' => $ordenation_type);
+        return $result;
     }
 
 	protected function genericViewLoader ($view_list, $data = array(), $add_header = true, $add_footer = true, $return_view = false) {
