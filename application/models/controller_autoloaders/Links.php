@@ -9,29 +9,32 @@
 class Links extends MY_Model {
 
     public static $definition = array(
-        'id' => array (
-            'defaultValue' => null
-        ),
-        'name' => array (
-            'defaultValue' => null
-        ),
-        'url' => array (
-            'defaultValue' => null
-        ),
-        'category_token' => array (
-            'defaultValue' => null
-        ),
-        'order' => array (
-            'defaultValue' => 0
-        ),
-        'model_name' => array (
-            'defaultValue' => null
-        ),
-        'function_name' => array (
-            'defaultValue' => null
-        ),
-        'active' => array (
-            'defaultValue' => false
+        'primary' => 'id_link',
+        'properties' => array (
+            'id_link' => array (
+                'defaultValue' => null
+            ),
+            'name' => array (
+                'defaultValue' => null
+            ),
+            'url' => array (
+                'defaultValue' => null
+            ),
+            'category_token' => array (
+                'defaultValue' => null
+            ),
+            'order' => array (
+                'defaultValue' => 0
+            ),
+            'model_name' => array (
+                'defaultValue' => null
+            ),
+            'function_name' => array (
+                'defaultValue' => null
+            ),
+            'active' => array (
+                'defaultValue' => false
+            )
         )
     );
 

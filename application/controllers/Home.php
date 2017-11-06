@@ -70,25 +70,34 @@ class Home extends MY_Controller
                 'condition_table1' => 'Image',
                 'condition_table2' => '', // literal
                 'condition_1' => 'active',
-                'condition_2' => 'true',
+                'condition_2' => true,
                 'operation_condition' => '=',
                 'ocurrence_condition_1' => 1, // not needed
                 // (not passed ocurrence_condition_2 as not needed in order to test)
             ),
             array( // condition group 1
+                'condition_table1' => 'Image',
+                'condition_table2' => '', // literal
+                'condition_1' => 'img_description',
+                'condition_2' => 'logo',
+                'operation_condition' => '=',
+                'ocurrence_condition_1' => 1, // not needed
+                // (not passed ocurrence_condition_2 as not needed in order to test)
+            ),
+            array( // condition group 2
                 'condition_table1' => 'ImageGroup',
                 'condition_table2' => '', // literal
                 'condition_1' => 'active',
-                'condition_2' => 'true',
+                'condition_2' => true,
                 'operation_condition' => '=',
                 // 'ocurrence_condition_1' => 1, // ommited in order to test
                 // (not passed ocurrence_condition_2 as not needed in order to test)
             ),
-            array( // condition group 1
+            array( // condition group 3
                 'condition_table1' => 'Merchant',
                 'condition_table2' => '', // literal
                 'condition_1' => 'active',
-                'condition_2' => 'true',
+                'condition_2' => true,
                 'operation_condition' => '=',
                 // 'ocurrence_condition_1' => 1, // ommited in order to test
                 // (not passed ocurrence_condition_2 as not needed in order to test)
@@ -107,6 +116,12 @@ class Home extends MY_Controller
                 'ordenation_column' => 'name',
                 'ordenation_type' => 'ASC',
                 'column_table' => 'merchant',
+                'order_in_join_list' => 1
+            ),
+            array(
+                'ordenation_column' => 'order',
+                'ordenation_type' => 'ASC',
+                'column_table' => 'image',
                 'order_in_join_list' => 1
             )
         );

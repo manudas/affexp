@@ -3,27 +3,30 @@
 class Category extends MY_Model {
 
     public static $definition = array(
-        'id' => array (
-            'defaultValue' => null
-        ),
-        'id_parent' => array (
-            'defaultValue' => null
-        ),
-        'img_id_group' => array (
-            'defaultValue' => null
-        ),
-        'active' => array (
-            'defaultValue' => false
+        'primary' => 'id_category',
+        'properties' => array (
+            'id_category' => array (
+                'defaultValue' => null
+            ),
+            'id_parent' => array (
+                'defaultValue' => null
+            ),
+            'id_image_group' => array (
+                'defaultValue' => null
+            ),
+            'active' => array (
+                'defaultValue' => false
+            )
         )
     );
     public static $joinable = array(
         array('join_with' => 'Category', 
-               'own_join_attribute' => 'id',
-               'foreign_join_attribute' => 'id',
+               'own_join_attribute' => 'id_category',
+               'foreign_join_attribute' => 'id_category',
                'join_operation' => '='),
         array('join_with' => 'ImageGroup',
-            'own_join_attribute' => 'img_id_group',
-            'foreign_join_attribute' => 'id',
+            'own_join_attribute' => 'id_image_group',
+            'foreign_join_attribute' => 'id_image_group',
             'join_operation' => '='
         /*
         ,

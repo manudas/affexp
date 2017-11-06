@@ -8,23 +8,26 @@
 class Configurations extends MY_Model {
 
     public static $definition = array(
-        'id' => array (
-            'defaultValue' => null
-        ),
-        'model_name' => array (
-            'defaultValue' => null
-        ),
-        'function_name' => array (
-            'defaultValue' => null
-        ),
-        'configuration_key' => array (
-            'defaultValue' => null
-        ),
-        'configuration_value' => array (
-            'defaultValue' => null
-        ),
-        'active' => array (
-            'defaultValue' => false
+        'primary' => 'id_configuration',
+        'properties' => array (
+            'id_configuration' => array (
+                'defaultValue' => null
+            ),
+            'model_name' => array (
+                'defaultValue' => null
+            ),
+            'function_name' => array (
+                'defaultValue' => null
+            ),
+            'configuration_key' => array (
+                'defaultValue' => null
+            ),
+            'configuration_value' => array (
+                'defaultValue' => null
+            ),
+            'active' => array (
+                'defaultValue' => false
+            )
         )
     );
 }

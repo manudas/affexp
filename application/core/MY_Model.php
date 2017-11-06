@@ -4,6 +4,7 @@ class MY_Model extends CI_Model
 {
 
     protected static $model_table_arr = array();
+    protected static $lang_file_arr = array();
 
     public static function getModelTable()
     {
@@ -14,6 +15,40 @@ class MY_Model extends CI_Model
         }
     }
 
+
+    public static function getLangFile()
+    {
+        if (isset(self::$lang_file_arr[static::class])) {
+            return self::$lang_file_arr[static::class];
+        } else {
+            return strtolower(static::class);
+        }
+    }
+
+
+    public static function setLangFile($file){
+        self::$lang_file_arr[static::class] = $file;
+    }
+
+    /**
+     * Non static function: we need to __construct the Object before use
+     *
+     * @param $key:             the key of which we are searching a translation
+     * @return bool|string:     the translation found, false if no translation was found
+     */
+    public function getTranslation($key) {
+        if (!isset(static::$definition['lang_properties'])
+            || !in_array($key, static::$definition['lang_properties'])){
+
+            return false; // no lang_definition found
+        }
+        else {
+            $lang_file_arr = selft::getLangFile();
+            $object_id = $this -> {self::$definition['primary']};
+            // line($line, $langfile = '', $log_errors = TRUE)
+            return $this -> lang -> line($object_id . '_' . $key, $lang_file_arr);
+        }
+    }
     /* array in the following format:
         array (
             'propertyname1' => array ('defaultValue' => 'amount',  // default value, can be null or whatever allowed value  
@@ -39,9 +74,9 @@ class MY_Model extends CI_Model
     */
     protected static $joinable = array();
 
-    public function __construct($param = null, $table = null)
+    public function init($param = null, $table = null)
     {
-        parent::__construct();
+        // parent::__construct();
 
         if (!empty($table)) {
             self::$model_table_arr[static::class] = strtolower($table);
@@ -67,7 +102,7 @@ class MY_Model extends CI_Model
 
     private function setDefaultValues()
     {
-        foreach (self::$definition as $nameProperty => $propertyArray) {
+        foreach (self::$definition['properties'] as $nameProperty => $propertyArray) {
             $this->{$nameProperty} = $propertyArray['defaultValue'];
         }
     }
@@ -594,7 +629,7 @@ class MY_Model extends CI_Model
         return $alias;
     }
 
-    private function setDefaultCondtionsVars($condition_list)
+    private static function setDefaultCondtionsVars($condition_list)
     {
         if (!empty($condition_list)) {
             $result = array();
@@ -642,8 +677,18 @@ class MY_Model extends CI_Model
                     if (!empty($condition_table1)) {
                         $where_alias1 = self::getAlias($condition_table1, $join_clausules, $ocurrence_condition_1);
                     }
+                    else {
+                        if (is_string($condition_1)) { // is a literal, we need to protect it adding quotes
+                            $condition_1 = "'$condition_1'";
+                        }
+                    }
                     if (!empty($condition_table2)) {
                         $where_alias2 = self::getAlias($condition_table2, $join_clausules, $ocurrence_condition_2);
+                    }
+                    else {
+                        if (is_string($condition_2)) { // is a literal, we need to protect it adding quotes
+                            $condition_2 = "'$condition_2'";
+                        }
                     }
                 } else {
                     $where = false;
