@@ -22,6 +22,8 @@ class Synchronization extends MY_Controller
     }
 
     private function syncNetwork($network_tag){
+        usar autoinit resources aqui. mirar a ver si autoinit resources carga header y footer, en cuyo caso hay que repensar
+
         $this -> network -> initByTag($network_tag);
         $network_data_struct = json_decode($this -> network -> sync_encoded_struct, true); // array asociativo
         $sync_url = $this -> network -> sync_url;
