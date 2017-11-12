@@ -76,6 +76,8 @@ class MY_Model extends CI_Model
 
     public function init($param = null, $table = null)
     {
+
+        $this  ->resetObject();
         // parent::__construct();
 
         if (!empty($table)) {
@@ -90,6 +92,8 @@ class MY_Model extends CI_Model
             $this->setDefaultValues();
         }
 
+        return $this;
+
     }
 
     public function setData($params = null)
@@ -100,9 +104,23 @@ class MY_Model extends CI_Model
         }
     }
 
+
+    public function resetObject() {
+        foreach ($this as $key => $value) {
+            $this->$key = null;  //set to null instead of unsetting
+        }
+    }
+
+    public static function getNewObject($params) {
+        $class_name = static::class;
+        $obj = new $class_name();
+        $obj -> init($params);
+        return $obj;
+    }
+
     private function setDefaultValues()
     {
-        foreach (self::$definition['properties'] as $nameProperty => $propertyArray) {
+        foreach (static::$definition['properties'] as $nameProperty => $propertyArray) {
             $this->{$nameProperty} = $propertyArray['defaultValue'];
         }
     }
@@ -228,10 +246,15 @@ class MY_Model extends CI_Model
     public static function getObjectList($filter = null, $limit = null, $offset = 0, $ordenation = null, $table = null)
     {
         $object_list = array();
+        $CI = &get_instance();
         $results = self::getList($filter, $limit, $offset, $ordenation, $table);
         foreach ($results as $result) {
             $current_class = static::class;
-            $object_list[] = new $current_class($result);
+            // $object_list[] = new $current_class($result);
+            if (!isset($CI -> {$current_class})){
+                $CI -> load -> model($current_class);
+            }
+            $object_list[] = clone($CI -> {$current_class} -> init($result));
         }
         return $object_list;
     }
