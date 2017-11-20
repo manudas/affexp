@@ -18,7 +18,8 @@ class MY_Controller extends CI_Controller {
                                                     'models',
                                                     'translations',
                                                     'links',
-                                                    'views'
+                                                    'views',
+                                                    'libraries'
     );
 
     private static $AUTOLOADABLE_RESOURCES_INIT_FUNCTION = array (
@@ -26,7 +27,8 @@ class MY_Controller extends CI_Controller {
             'models' => 'auto_init_models',
             'translations' => 'auto_init_translations',
             'links' => '', // empty if no processing is required
-            'views' => 'build_views_array'
+            'views' => 'build_views_array',
+            'libraries' => 'auto_load_libraries'
         );
 
     public static function getOrdenationForAutoloadableResource($autoloadable_resource_model) {
@@ -175,6 +177,17 @@ class MY_Controller extends CI_Controller {
         return $result;
     }
 
+    public function auto_load_libraries($libraries) {
+        $result_name_arr = null;
+        if ( !empty( $libraries ) ) {
+            $result_name_arr = array();
+            foreach ( $libraries as $library ) {
+                $this -> load -> library ( $library -> autoloaded_library_name );
+                $result_name_arr[] = $library -> autoloaded_library_name;
+            }
+        }
+        return $result_name_arr;
+    }
 
     public function auto_init_models ( $models ) {
         $result_name_arr = null;

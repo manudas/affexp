@@ -180,7 +180,7 @@ class MY_Model extends CI_Model
      * 'order_in_join_list' => number of the aparition in the join list. default = 1
      * 'ordenation_type => 'ASC' or 'DESC'
      */
-    public static function getList($filter = null, $limit = null, $offset = 0, $ordenation = 'ASC', $table = null)
+    public static function getList($filter = null, $limit = null, $offset = 0, $ordenation = null, $table = null)
     {
 
         if (!empty($table)) {
@@ -195,12 +195,14 @@ class MY_Model extends CI_Model
         $instance->db->from(self::getModelTable());
 
 
-        for ($i = 0; $i < count($ordenation); $i++){
+        if (isset($ordenation)) {
+            for ($i = 0; $i < count($ordenation); $i++) {
 
-            $single_order_by = $ordenation[$i]['ordenation_column'];
-            $current_ordenation = $ordenation[$i]['ordenation_type'];
+                $single_order_by = $ordenation[$i]['ordenation_column'];
+                $current_ordenation = $ordenation[$i]['ordenation_type'];
 
-            $instance->db->order_by($single_order_by, $current_ordenation);
+                $instance->db->order_by($single_order_by, $current_ordenation);
+            }
         }
 
         /*

@@ -100,6 +100,34 @@ INSERT INTO `imagegroup` VALUES (1,'merchant','Ao.com',1),(2,'merchant','Argos',
 UNLOCK TABLES;
 
 --
+-- Table structure for table `libraries`
+--
+
+DROP TABLE IF EXISTS `libraries`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `libraries` (
+  `id_library` int(11) NOT NULL AUTO_INCREMENT,
+  `model_name` varchar(128) NOT NULL,
+  `function_name` varchar(128) NOT NULL,
+  `autoloaded_library_name` varchar(512) NOT NULL,
+  `active` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id_library`),
+  UNIQUE KEY `model_name` (`model_name`,`function_name`,`autoloaded_library_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `libraries`
+--
+
+LOCK TABLES `libraries` WRITE;
+/*!40000 ALTER TABLE `libraries` DISABLE KEYS */;
+INSERT INTO `libraries` VALUES (1,'synchronization','syncNetwork','ExternalUrlLoader',1);
+/*!40000 ALTER TABLE `libraries` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `links`
 --
 
@@ -166,14 +194,14 @@ DROP TABLE IF EXISTS `models`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `models` (
-  `id_model` int(11) NOT NULL,
+  `id_model` int(11) NOT NULL AUTO_INCREMENT,
   `model_name` varchar(128) NOT NULL,
   `function_name` varchar(128) NOT NULL,
   `autoloaded_model_name` varchar(512) NOT NULL,
   `active` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id_model`),
   UNIQUE KEY `model_name` (`model_name`,`function_name`,`autoloaded_model_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182,7 +210,7 @@ CREATE TABLE `models` (
 
 LOCK TABLES `models` WRITE;
 /*!40000 ALTER TABLE `models` DISABLE KEYS */;
-INSERT INTO `models` VALUES (1,'home','load_home','merchant',1),(2,'home','load_home','imageGroup',1),(3,'home','load_home','image',1);
+INSERT INTO `models` VALUES (1,'home','load_home','merchant',1),(2,'home','load_home','imageGroup',1),(3,'home','load_home','image',1),(4,'synchronization','syncNetwork','network',1);
 /*!40000 ALTER TABLE `models` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -306,4 +334,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-06  7:39:07
+-- Dump completed on 2017-11-20  7:47:39

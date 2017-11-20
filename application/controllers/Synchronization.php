@@ -17,24 +17,39 @@ class Synchronization extends MY_Controller
         $this->load->view('errors/html/error_general', $data);
     }
 
+    private function wrongNetwork() {
+        $this->output->set_status_header(400, "Bad request");
+        $data = array();
+        $data['heading'] = 'Unknown network. Unable to synchronize';
+        $data['message'] = 'Please specify a valid network';
+        $this->load->view('errors/html/error_general', $data);
+    }
+
     public function ttuk(){
         $this -> syncNetwork(__FUNCTION__);
     }
 
     private function syncNetwork($network_tag){
-        usar autoinit resources aqui. mirar a ver si autoinit resources carga header y footer, en cuyo caso hay que repensar
+
+        $preprocessed_data =
+            $this->auto_init_needed_resources(__CLASS__, __FUNCTION__, array('models', 'libraries'));
 
         $this -> network -> initByTag($network_tag);
-        $network_data_struct = json_decode($this -> network -> sync_encoded_struct, true); // array asociativo
-        $sync_url = $this -> network -> sync_url;
+        if (isset($this -> network -> id_network)) {
+            $network_data_struct = json_decode($this->network->sync_encoded_struct, true); // array asociativo
+            $sync_url = $this->network->sync_url;
 
-        if (!empty ($sync_url) && !emtpy($network_data_struct)) {
+            if (!empty ($sync_url) && !emtpy($network_data_struct)) {
 
-            $xml_string_data = $this -> ExternalUrlLoader -> load ($sync_url);
-            $xml_document = DOMDocument::loadXML($xml_string_data);
-            $data = $this -> getSynchronizationData ($xml_document, $network_data_struct);
-            $this -> save_synchronization_data($data);
+                $xml_string_data = $this->ExternalUrlLoader->load($sync_url);
+                $xml_document = DOMDocument::loadXML($xml_string_data);
+                $data = $this->getSynchronizationData($xml_document, $network_data_struct);
+                $this->save_synchronization_data($data);
 
+            }
+        }
+        else {
+            $this -> wrongNetwork();
         }
     }
 
